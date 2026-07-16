@@ -1,0 +1,141 @@
+/* =========================================================
+   profile.css — Profile page + Orders page
+   (orders.html reuses .profile-card per order, so this file
+   also styles the raw h3/h4/p/ul/li markup those cards contain)
+   ========================================================= */
+
+.profile-container {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 38px 40px;
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.profile-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--amber) 0%, var(--navy) 60%, var(--blue) 100%);
+}
+
+.profile-card h1 { font-size: 25px; margin-bottom: 22px; }
+.profile-card h2 { font-size: 17px; margin: 4px 0 18px; }
+
+.profile-card .form-group { margin-bottom: 18px; }
+.profile-card label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.profile-card input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14.5px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: #FBFBFD;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+.profile-card input:focus {
+  border-color: var(--navy);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(20,33,61,0.08);
+}
+.profile-card input[readonly] {
+  background: #F1F2F5;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.profile-card hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 28px 0;
+}
+
+.profile-card .btn-block { padding: 12px; font-size: 14.5px; }
+
+/* Danger zone: give the delete button a little visual separation */
+.profile-card #deleteBtn {
+  margin-top: 4px;
+}
+
+/* =========================================================
+   Order cards (orders.html) — plain markup inside .profile-card:
+   h3 "Order ID", <p>id</p>, <hr>, <p><strong>Status:</strong> ..</p>,
+   h4 "Products", <ul><li>...</li></ul>, optional cancel button
+   ========================================================= */
+
+#ordersContainer .profile-card {
+  padding: 26px 28px;
+}
+#ordersContainer .profile-card h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+#ordersContainer .profile-card h3 + p {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--navy-deep);
+  word-break: break-all;
+}
+#ordersContainer .profile-card p {
+  font-size: 14px;
+  margin: 8px 0;
+  color: var(--text);
+}
+#ordersContainer .profile-card p strong {
+  color: var(--navy-deep);
+  font-weight: 700;
+  margin-right: 4px;
+}
+#ordersContainer .profile-card h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin: 18px 0 8px;
+}
+#ordersContainer .profile-card ul {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#ordersContainer .profile-card ul li {
+  font-size: 13.5px;
+  padding: 9px 12px;
+  background: #F6F7FA;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+#ordersContainer .profile-card .btn-danger {
+  margin-top: 6px;
+}
+
+/* Status text color hinting — matches the word right after "Status :" */
+#ordersContainer .profile-card p:has(strong):nth-of-type(1) {
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .profile-card { padding: 26px 20px; }
+  #ordersContainer .profile-card { padding: 20px 18px; }
+}

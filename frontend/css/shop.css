@@ -1,0 +1,115 @@
+/* =========================================================
+   shop.css — Search & Wishlist pages
+   These pages build .product-card from raw markup (img, h3,
+   p, h4, p, a/button) rather than the .product-thumb/.product-body
+   structure style.css expects on the shop/home pages, so this
+   file dresses those raw children up to match the same look.
+   ========================================================= */
+
+/* ---------- Search box (search.html) ---------- */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: var(--shadow);
+}
+.search-box input {
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  color: var(--text);
+  outline: none;
+}
+.search-box input::placeholder { color: #A6ADBB; }
+.search-box .btn {
+  flex-shrink: 0;
+}
+
+/* ---------- Raw product cards (search results / wishlist) ---------- */
+#searchResult .product-card,
+#wishlistContainer .product-card {
+  padding: 0 0 16px;
+}
+
+#searchResult .product-card img,
+#wishlistContainer .product-card img {
+  border-radius: var(--radius) var(--radius) 0 0;
+  transition: transform .25s ease;
+}
+#searchResult .product-card:hover img,
+#wishlistContainer .product-card:hover img {
+  transform: scale(1.035);
+}
+
+#searchResult .product-card h3,
+#wishlistContainer .product-card h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+  margin: 14px 16px 4px;
+}
+
+#searchResult .product-card p,
+#wishlistContainer .product-card p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 16px;
+  text-transform: capitalize;
+}
+/* Brand line (first <p>) slightly muted uppercase, category (later <p>) as a tag */
+#searchResult .product-card p:first-of-type,
+#wishlistContainer .product-card p:first-of-type {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+#searchResult .product-card h4,
+#wishlistContainer .product-card h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--navy-deep);
+  margin: 8px 16px 4px;
+}
+
+#searchResult .product-card > a.btn,
+#wishlistContainer .product-card > div {
+  margin: 12px 16px 0;
+}
+#searchResult .product-card > a.btn {
+  display: flex;
+  justify-content: center;
+}
+#wishlistContainer .product-card > div .btn,
+#wishlistContainer .product-card > div .btn-danger {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Category pill look for the trailing category <p> */
+#searchResult .product-card p:last-of-type,
+#wishlistContainer .product-card p:last-of-type {
+  display: inline-block;
+  margin: 6px 16px 0;
+  padding: 3px 9px;
+  background: #EEF1F8;
+  color: var(--blue);
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 480px) {
+  .search-box { flex-wrap: wrap; }
+}

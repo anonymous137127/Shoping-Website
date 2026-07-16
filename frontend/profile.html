@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile - Market</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+</head>
+
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+
+    <div class="container">
+
+        <div class="profile-container">
+
+            <div class="profile-card">
+
+                <h1>My Profile</h1>
+
+                <form id="profileForm">
+
+                    <div class="form-group">
+
+                        <label>Full Name</label>
+
+                        <input
+                            type="text"
+                            id="fullname"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Email Address</label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            readonly>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Phone Number</label>
+
+                        <input
+                            type="text"
+                            id="phone"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>Profile Image URL</label>
+
+                        <input
+                            type="text"
+                            id="profile">
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-block">
+
+                        Update Profile
+
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <h2>Change Password</h2>
+
+                <form id="passwordForm">
+
+                    <div class="form-group">
+
+                        <label>Old Password</label>
+
+                        <input
+                            type="password"
+                            id="oldPassword"
+                            required>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>New Password</label>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            required>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-block">
+
+                        Change Password
+
+                    </button>
+
+                </form>
+
+                <hr>
+
+                <button
+                    id="deleteBtn"
+                    class="btn btn-danger btn-block">
+
+                    Delete Account
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/main.js"></script>
+
+<script>
+
+const API_URL = "https://shopping-backend-s8l8.onrender.com/api";
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+
+    window.location.href = "login.html";
+
+}
+
+const headers = {
+
+    "Content-Type": "application/json",
+
+    "Authorization": "Bearer " + token
+
+};
+
+async function loadProfile() {
+
+    try {
+
+        const response = await fetch(
+
+            `${API_URL}/users/profile`,
+
+            {
+
+                headers
+
+            }
+
+        );
+
+        if (response.status === 401) {
+
+            localStorage.clear();
+
+            window.location.href = "login.html";
+
+            return;
+
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            document.getElementById("fullname").value = data.user.fullname;
+
+            document.getElementById("email").value = data.user.email;
+
+            document.getElementById("phone").value = data.user.phone;
+
+            document.getElementById("profile").value = data.user.profile || "";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert("Unable to load profile.");
+
+    }
+
+}
+
+loadProfile();
+
+document
+.getElementById("profileForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    try{
+
+        const response = await fetch(
+
+            `${API_URL}/users/profile`,
+
+            {
+
+                method:"PUT",
+
+                headers,
+
+                body:JSON.stringify({
+
+                    fullname:
+
+                    document.getElementById("fullname").value,
+
+                    phone:
+
+                    document.getElementById("phone").value,
+
+                    profile:
+
+                    document.getElementById("profile").value
+
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        alert(data.message);
+
+    }
+
+    catch(error){
+
+        alert("Unable to update profile.");
+
+    }
+
+});
+
+document
+.getElementById("passwordForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    try{
+
+        const response = await fetch(
+
+            `${API_URL}/users/change-password`,
+
+            {
+
+                method:"PUT",
+
+                headers,
+
+                body:JSON.stringify({
+
+                    old_password:
+
+                    document.getElementById("oldPassword").value,
+
+                    new_password:
+
+                    document.getElementById("newPassword").value
+
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        document.getElementById("oldPassword").value = "";
+
+        document.getElementById("newPassword").value = "";
+
+    }
+
+    catch(error){
+
+        alert("Unable to change password.");
+
+    }
+
+});
+
+document
+.getElementById("deleteBtn")
+.addEventListener("click", async function(){
+
+    const confirmDelete = confirm("Are you sure you want to delete your account?");
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+    try{
+
+        const response = await fetch(
+
+            `${API_URL}/users/delete`,
+
+            {
+
+                method:"DELETE",
+
+                headers
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        alert(data.message);
+
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        window.location.href = "index.html";
+
+    }
+
+    catch(error){
+
+        alert("Unable to delete account.");
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

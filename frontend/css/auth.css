@@ -1,0 +1,131 @@
+/* =========================================================
+   auth.css — Login & Register pages
+   Extends style.css design tokens (navy / amber / Sora+Inter).
+   ========================================================= */
+
+.auth-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 40px 38px 34px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+/* Signature amber-to-navy accent bar on top of the card */
+.auth-box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--amber) 0%, var(--navy) 60%, var(--blue) 100%);
+}
+
+.auth-box h1 {
+  font-size: 26px;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 26px;
+  line-height: 1.5;
+}
+
+/* ---------- Form fields ---------- */
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14.5px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: #FBFBFD;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #A6ADBB;
+}
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #C7CEDB;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--navy);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(20,33,61,0.08);
+}
+.form-group input[readonly] {
+  background: #F1F2F5;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Submit button spacing when it directly follows fields */
+.auth-box form .btn-block {
+  margin-top: 6px;
+  padding: 13px;
+  font-size: 14.5px;
+  letter-spacing: 0.2px;
+}
+
+/* ---------- Footer links ---------- */
+.auth-links {
+  margin-top: 22px;
+  text-align: center;
+}
+.auth-links p {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.auth-links a {
+  color: var(--navy);
+  font-weight: 700;
+}
+.auth-links a:hover {
+  color: var(--amber-deep);
+}
+
+/* ---------- Small decorative divider between grouped forms ---------- */
+.auth-box hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 26px 0;
+}
+
+/* ---------- Responsive base (fine detail lives in responsive.css) ---------- */
+@media (max-width: 480px) {
+  .auth-box { padding: 30px 22px 26px; }
+}

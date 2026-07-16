@@ -1,0 +1,80 @@
+/* =========================================================
+   cart.css — Cart page (cart.html)
+   Enhances .cart-layout / .cart-item / .summary-box from style.css.
+   ========================================================= */
+
+@keyframes cartItemIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes summaryIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes qtyBump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+#cartMount .cart-item {
+  animation: cartItemIn .35s ease both;
+}
+#cartMount .cart-item:nth-child(1) { animation-delay: .02s; }
+#cartMount .cart-item:nth-child(2) { animation-delay: .06s; }
+#cartMount .cart-item:nth-child(3) { animation-delay: .10s; }
+#cartMount .cart-item:nth-child(4) { animation-delay: .14s; }
+#cartMount .cart-item:nth-child(n+5) { animation-delay: .18s; }
+
+.cart-item-thumb {
+  transition: transform .2s ease;
+}
+.cart-item:hover .cart-item-thumb {
+  transform: scale(1.06);
+}
+
+.qty-control button {
+  transition: background-color .15s ease, color .15s ease;
+}
+.qty-control button:hover {
+  background: var(--navy);
+  color: #fff;
+}
+.qty-control span {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* Quick "bump" feedback when quantity changes re-renders the item */
+.cart-item { transition: box-shadow .2s ease; }
+
+.remove-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.summary-box {
+  animation: summaryIn .4s ease .1s both;
+}
+.summary-row { transition: color .15s ease; }
+.summary-total span:last-child {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.summary-box .btn-block {
+  margin-top: 2px;
+}
+.summary-box .btn-block:hover {
+  box-shadow: 0 8px 20px rgba(232,163,61,0.28);
+}
+
+.empty-state .btn-primary {
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cartMount .cart-item, .summary-box {
+    animation: none !important;
+  }
+}

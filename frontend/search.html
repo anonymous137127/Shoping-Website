@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Search Products - Market</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/shop.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+</head>
+
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+
+<div class="container">
+
+<h1>Search Products</h1>
+
+<div class="search-box" style="margin:20px 0;">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search Products..."
+style="width:80%;padding:12px;">
+
+<button
+id="searchBtn"
+class="btn btn-primary">
+
+Search
+
+</button>
+
+</div>
+
+<div id="searchResult">
+
+</div>
+
+</div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/main.js"></script>
+
+<script>
+
+const API_URL="https://shopping-backend-s8l8.onrender.com/api";
+
+const result=document.getElementById("searchResult");
+
+document
+.getElementById("searchBtn")
+.addEventListener("click",searchProducts);
+
+document
+.getElementById("searchInput")
+.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+searchProducts();
+
+}
+
+});
+
+async function searchProducts(){
+
+const keyword=document
+.getElementById("searchInput")
+.value
+.trim();
+
+if(keyword===""){
+
+alert("Enter product name");
+
+return;
+
+}
+
+result.innerHTML="<p>Searching...</p>";
+
+try{
+
+const response=await fetch(
+
+`${API_URL}/products/search?q=${encodeURIComponent(keyword)}`
+
+);
+
+const data=await response.json();
+
+if(!data.success || data.products.length===0){
+
+result.innerHTML=`
+
+<div class="empty-state">
+
+<h3>No Products Found</h3>
+
+<p>Try another keyword.</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+let html='<div class="product-grid">';
+
+data.products.forEach(product=>{
+
+html+=`
+
+<div class="product-card">
+
+<img
+src="${product.image}"
+alt="${product.name}"
+style="width:100%;height:220px;object-fit:cover;">
+
+<h3>${product.name}</h3>
+
+<p>${product.brand}</p>
+
+<h4>₹${product.price}</h4>
+
+<p>${product.category}</p>
+
+<a
+href="product.html?id=${product._id}"
+class="btn btn-primary">
+
+View Product
+
+</a>
+
+</div>
+
+`;
+
+});
+
+html+="</div>";
+
+result.innerHTML=html;
+
+}
+
+catch(error){
+
+console.log(error);
+
+result.innerHTML=`
+
+<div class="empty-state">
+
+<h3>
+
+Unable to connect to server.
+
+</h3>
+
+</div>
+
+`;
+
+}
+
+}
+
+const params=new URLSearchParams(window.location.search);
+
+const q=params.get("q");
+
+if(q){
+
+document.getElementById("searchInput").value=q;
+
+searchProducts();
+
+}
+
+</script>
+
+</body>
+
+</html>

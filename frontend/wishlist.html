@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Wishlist - Market</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/shop.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+</head>
+
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+
+<div class="container">
+
+<h1>My Wishlist</h1>
+
+<div id="wishlistContainer">
+
+Loading...
+
+</div>
+
+</div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/main.js"></script>
+
+<script>
+
+const API_URL="https://shopping-backend-s8l8.onrender.com/api";
+
+const token=localStorage.getItem("token");
+
+if(!token){
+
+window.location="login.html";
+
+}
+
+loadWishlist();
+
+async function loadWishlist(){
+
+try{
+
+const response=await fetch(
+
+`${API_URL}/wishlist/`,
+
+{
+
+headers:{
+
+Authorization:"Bearer "+token
+
+}
+
+}
+
+);
+
+const data=await response.json();
+
+const container=document.getElementById("wishlistContainer");
+
+if(!data.success || data.wishlist.length===0){
+
+container.innerHTML=`
+
+<div class="empty-state">
+
+<h3>Your Wishlist is Empty</h3>
+
+<p>Add products to your wishlist.</p>
+
+<a href="shop.html" class="btn btn-primary">
+
+Browse Products
+
+</a>
+
+</div>
+
+`;
+
+return;
+
+}
+
+let html='<div class="product-grid">';
+
+data.wishlist.forEach(item=>{
+
+const product=item.product;
+
+html+=`
+
+<div class="product-card">
+
+<img
+
+src="${product.image}"
+
+alt="${product.name}"
+
+style="width:100%;height:220px;object-fit:cover;">
+
+<h3>${product.name}</h3>
+
+<p>${product.brand}</p>
+
+<h4>₹${product.price}</h4>
+
+<p>${product.category}</p>
+
+<div style="display:flex;gap:10px;margin-top:15px;">
+
+<button
+
+class="btn btn-primary"
+
+onclick="moveToCart('${item.wishlist_id}')">
+
+Move To Cart
+
+</button>
+
+<button
+
+class="btn btn-danger"
+
+onclick="removeWishlist('${item.wishlist_id}')">
+
+Remove
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+html+="</div>";
+
+container.innerHTML=html;
+
+}
+
+catch(error){
+
+console.log(error);
+
+document.getElementById("wishlistContainer").innerHTML=`
+
+<div class="empty-state">
+
+<h3>
+
+Unable to load wishlist.
+
+</h3>
+
+</div>
+
+`;
+
+}
+
+}
+
+async function moveToCart(id){
+
+try{
+
+const response=await fetch(
+
+`${API_URL}/wishlist/move-to-cart/${id}`,
+
+{
+
+method:"POST",
+
+headers:{
+
+Authorization:"Bearer "+token
+
+}
+
+}
+
+);
+
+const data=await response.json();
+
+alert(data.message);
+
+loadWishlist();
+
+}
+
+catch(error){
+
+alert("Unable to move item.");
+
+}
+
+}
+
+async function removeWishlist(id){
+
+if(!confirm("Remove this product from wishlist?")){
+
+return;
+
+}
+
+try{
+
+const response=await fetch(
+
+`${API_URL}/wishlist/remove/${id}`,
+
+{
+
+method:"DELETE",
+
+headers:{
+
+Authorization:"Bearer "+token
+
+}
+
+}
+
+);
+
+const data=await response.json();
+
+alert(data.message);
+
+loadWishlist();
+
+}
+
+catch(error){
+
+alert("Unable to remove item.");
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

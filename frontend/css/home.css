@@ -1,0 +1,107 @@
+/* =========================================================
+   home.css — Landing page (index.html) enhancements
+   Layers extra polish on top of .hero/.cat-grid/.product-grid
+   already defined in style.css.
+   ========================================================= */
+
+@keyframes heroFloat {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%      { transform: rotate(-4deg) translateY(-10px); }
+}
+@keyframes heroGlowPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 0.9;  transform: scale(1.08); }
+}
+@keyframes heroTextIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Hero entrance ---------- */
+.hero-eyebrow  { animation: heroTextIn .5s ease .05s both; }
+.hero h1       { animation: heroTextIn .55s ease .1s both; }
+.hero p        { animation: heroTextIn .55s ease .16s both; }
+.hero-ctas     { animation: heroTextIn .55s ease .22s both; }
+.hero-stats    { animation: heroTextIn .55s ease .28s both; }
+.hero-visual   { animation: heroTextIn .6s ease .18s both; }
+
+.hero::after {
+  animation: heroGlowPulse 5s ease-in-out infinite;
+}
+
+/* Floating price ticket */
+.hero-visual .ticket {
+  animation: heroFloat 4.5s ease-in-out infinite;
+}
+
+/* CTA buttons: a touch more presence on this page */
+.hero-ctas .btn-primary {
+  box-shadow: 0 8px 20px rgba(232,163,61,0.25);
+}
+.hero-ctas .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(232,163,61,0.35);
+}
+.hero-ctas .btn-ghost:hover {
+  transform: translateY(-2px);
+}
+.hero-ctas .btn { transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease; }
+
+/* Stat numbers count-in emphasis */
+.hero-stat b { transition: color .2s ease; }
+.hero-stat:hover b { color: #fff; }
+
+/* ---------- Section headings ---------- */
+#categories .section-head h2,
+.section-head h2 {
+  position: relative;
+  padding-bottom: 8px;
+}
+.section-head h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 42px; height: 3px;
+  border-radius: 2px;
+  background: var(--amber);
+}
+
+/* ---------- Category grid ---------- */
+.cat-card {
+  animation: heroTextIn .4s ease both;
+}
+.cat-grid .cat-card:nth-child(1) { animation-delay: .02s; }
+.cat-grid .cat-card:nth-child(2) { animation-delay: .06s; }
+.cat-grid .cat-card:nth-child(3) { animation-delay: .10s; }
+.cat-grid .cat-card:nth-child(4) { animation-delay: .14s; }
+.cat-grid .cat-card:nth-child(5) { animation-delay: .18s; }
+.cat-grid .cat-card:nth-child(6) { animation-delay: .22s; }
+
+.cat-icon { transition: background-color .18s ease, transform .18s ease; }
+.cat-card:hover .cat-icon {
+  background: var(--amber);
+  color: var(--navy-deep);
+  transform: scale(1.08);
+}
+
+/* ---------- Bestseller / New arrival product cards ---------- */
+#bestsellerGrid .product-card,
+#newGrid .product-card {
+  animation: heroTextIn .4s ease both;
+}
+#bestsellerGrid .product-card:nth-child(1), #newGrid .product-card:nth-child(1) { animation-delay: .02s; }
+#bestsellerGrid .product-card:nth-child(2), #newGrid .product-card:nth-child(2) { animation-delay: .06s; }
+#bestsellerGrid .product-card:nth-child(3), #newGrid .product-card:nth-child(3) { animation-delay: .10s; }
+#bestsellerGrid .product-card:nth-child(4), #newGrid .product-card:nth-child(4) { animation-delay: .14s; }
+
+.product-badge {
+  animation: heroGlowPulse 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::after, .hero-visual .ticket, .product-badge,
+  .hero-eyebrow, .hero h1, .hero p, .hero-ctas, .hero-stats, .hero-visual,
+  .cat-card, #bestsellerGrid .product-card, #newGrid .product-card {
+    animation: none !important;
+  }
+}
