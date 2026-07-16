@@ -11,14 +11,16 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/checkout.css">
-<link rel="stylesheet" href="css/responsive.css">
-<link rel="stylesheet" href="css/animations.css">
 
 </head>
 
 <body>
 
-<a href="#main" class="skip-link">Skip to content</a>
+<a href="#main" class="skip-link">
+
+Skip to content
+
+</a>
 
 <div id="headerMount"></div>
 
@@ -26,13 +28,15 @@
 
 <div class="container">
 
-<div class="checkout-container">
+<h1>
 
-<h1>Checkout</h1>
+Checkout
 
-<p class="auth-subtitle">
+</h1>
 
-Complete your order details.
+<p>
+
+Please enter your delivery details.
 
 </p>
 
@@ -40,56 +44,101 @@ Complete your order details.
 
 <div class="form-group">
 
-<label>Shipping Address</label>
+<label>
 
-<textarea
-id="address"
-rows="5"
-placeholder="Enter Full Address"
-required></textarea>
+Full Name
+
+</label>
+
+<input
+type="text"
+id="fullname"
+required>
 
 </div>
 
 <div class="form-group">
 
-<label>Payment Method</label>
+<label>
 
-<select id="payment_method" required>
+Phone Number
 
-<option value="Cash On Delivery">
+</label>
 
-Cash On Delivery
+<input
+type="tel"
+id="phone"
+required>
 
-</option>
+</div>
 
-<option value="UPI">
+<div class="form-group">
 
-UPI
+<label>
 
-</option>
+Delivery Address
 
-<option value="Credit Card">
+</label>
 
-Credit Card
+<textarea
+id="address"
+rows="4"
+required>
 
-</option>
+</textarea>
 
-<option value="Debit Card">
+</div>
 
-Debit Card
+<div class="form-group">
 
-</option>
+<label>
 
-</select>
+City
+
+</label>
+
+<input
+type="text"
+id="city"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+State
+
+</label>
+
+<input
+type="text"
+id="state"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+Pincode
+
+</label>
+
+<input
+type="text"
+id="pincode"
+required>
 
 </div>
 
 <button
 type="submit"
-id="placeOrderBtn"
 class="btn btn-primary btn-block">
 
-Place Order
+Continue To Payment
 
 </button>
 
@@ -97,106 +146,62 @@ Place Order
 
 </div>
 
-</div>
-
 </main>
 
 <div id="footerMount"></div>
 
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/footer.js"></script>
 <script src="js/main.js"></script>
 
 <script>
 
-const API_URL =
-"https://shopping-backend-s8l8.onrender.com/api";
+const form = document.getElementById("checkoutForm");
 
-const token =
-localStorage.getItem("token");
-
-if(!token){
-
-window.location="login.html";
-
-}
-
-document
-.getElementById("checkoutForm")
-.addEventListener("submit",async(e)=>{
+form.addEventListener("submit", function(e){
 
 e.preventDefault();
 
-const button =
-document.getElementById("placeOrderBtn");
+const delivery = {
 
-button.disabled=true;
+fullname:
 
-button.innerHTML="Placing Order...";
+document.getElementById("fullname").value,
 
-try{
+phone:
 
-const response=await fetch(
-
-`${API_URL}/orders/place`,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json",
-
-Authorization:"Bearer "+token
-
-},
-
-body:JSON.stringify({
+document.getElementById("phone").value,
 
 address:
 
 document.getElementById("address").value,
 
-payment_method:
+city:
 
-document.getElementById("payment_method").value
+document.getElementById("city").value,
 
-})
+state:
 
-}
+document.getElementById("state").value,
+
+pincode:
+
+document.getElementById("pincode").value
+
+};
+
+localStorage.setItem(
+
+"delivery",
+
+JSON.stringify(delivery)
 
 );
 
-const data=await response.json();
-
-if(response.ok && data.success){
-
-alert("Order Placed Successfully");
-
-window.location="orders.html";
-
-}else{
-
-alert(data.message);
-
-}
-
-}
-
-catch(error){
-
-console.error(error);
-
-alert("Unable to connect to server.");
-
-}
-
-finally{
-
-button.disabled=false;
-
-button.innerHTML="Place Order";
-
-}
+window.location.href="payment.html";
 
 });
 

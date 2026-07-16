@@ -1,19 +1,41 @@
 /* =========================================================
    checkout.css — Checkout page
+   Matches the actual markup: .container > h1, p, #checkoutForm
+   (no wrapper div, so the form itself becomes the card).
    ========================================================= */
 
-.checkout-container {
-  max-width: 620px;
+@keyframes checkoutIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.container h1 {
+  font-size: 26px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.container > p {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 28px;
+}
+
+/* ---------- The form is the card ---------- */
+#checkoutForm {
+  max-width: 560px;
   margin: 0 auto;
   background: var(--card);
   border-radius: 14px;
   box-shadow: var(--shadow);
-  padding: 40px 42px 36px;
   border: 1px solid var(--line);
+  padding: 40px 42px 36px;
   position: relative;
   overflow: hidden;
+  animation: checkoutIn .4s ease both;
 }
-.checkout-container::before {
+#checkoutForm::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -21,28 +43,20 @@
   background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--amber) 100%);
 }
 
-.checkout-container h1 {
-  font-size: 26px;
-  margin-bottom: 6px;
-}
-
-.checkout-container .auth-subtitle {
-  margin-bottom: 28px;
-}
-
 /* ---------- Fields ---------- */
-.checkout-container .form-group {
+#checkoutForm .form-group {
   margin-bottom: 20px;
 }
-.checkout-container label {
+#checkoutForm label {
   display: block;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 6px;
   color: var(--text);
+  letter-spacing: 0.2px;
 }
-.checkout-container textarea,
-.checkout-container select {
+#checkoutForm input,
+#checkoutForm textarea {
   width: 100%;
   padding: 12px 14px;
   font-size: 14.5px;
@@ -52,50 +66,76 @@
   border: 1.5px solid var(--line);
   border-radius: 8px;
   outline: none;
-  resize: vertical;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, background-color .18s ease;
 }
-.checkout-container textarea:focus,
-.checkout-container select:focus {
+#checkoutForm textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+#checkoutForm input::placeholder,
+#checkoutForm textarea::placeholder {
+  color: #A6ADBB;
+}
+#checkoutForm input:hover,
+#checkoutForm textarea:hover {
+  border-color: #C7CEDB;
+}
+#checkoutForm input:focus,
+#checkoutForm textarea:focus {
   border-color: var(--navy);
   background: #fff;
   box-shadow: 0 0 0 3px rgba(20,33,61,0.08);
+  transform: translateY(-1px);
+}
+#checkoutForm input:invalid:not(:placeholder-shown),
+#checkoutForm textarea:invalid:not(:placeholder-shown) {
+  border-color: var(--danger);
 }
 
-/* Custom select arrow, matches header search affordance */
-.checkout-container select {
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, var(--navy) 50%),
-                     linear-gradient(135deg, var(--navy) 50%, transparent 50%);
-  background-position: calc(100% - 20px) center, calc(100% - 15px) center;
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-  padding-right: 34px;
-  cursor: pointer;
+/* City / State / Pincode sit naturally in a row on wider screens */
+#checkoutForm .form-group:has(#city),
+#checkoutForm .form-group:has(#state),
+#checkoutForm .form-group:has(#pincode) {
+  display: inline-block;
+  width: calc(33.333% - 11px);
+  vertical-align: top;
 }
-
-/* Payment method options get a little breathing room in most browsers */
-.checkout-container option {
-  padding: 8px;
-}
-
-/* ---------- Order note strip ---------- */
-.checkout-container p.auth-subtitle {
-  padding: 10px 14px;
-  background: #FBF6EC;
-  border: 1px dashed #D8B877;
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 13.5px;
-}
+#checkoutForm .form-group:has(#city) { margin-right: 16px; }
+#checkoutForm .form-group:has(#state) { margin-right: 16px; }
 
 /* ---------- Submit ---------- */
-.checkout-container .btn-block {
+#checkoutForm .btn-block {
   margin-top: 8px;
   padding: 14px;
   font-size: 15px;
+  transition: background-color .18s ease, transform .12s ease, box-shadow .18s ease;
+}
+#checkoutForm .btn-block:hover {
+  box-shadow: 0 8px 20px rgba(232,163,61,0.28);
+}
+#checkoutForm .btn-block:active {
+  transform: translateY(1px);
 }
 
+/* ---------- Responsive ---------- */
+@media (max-width: 620px) {
+  #checkoutForm {
+    padding: 30px 26px 26px;
+  }
+  #checkoutForm .form-group:has(#city),
+  #checkoutForm .form-group:has(#state),
+  #checkoutForm .form-group:has(#pincode) {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+  }
+}
 @media (max-width: 480px) {
-  .checkout-container { padding: 28px 22px 26px; }
+  .container h1 { font-size: 22px; }
+  #checkoutForm { padding: 26px 20px 22px; border-radius: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #checkoutForm { animation: none !important; }
 }

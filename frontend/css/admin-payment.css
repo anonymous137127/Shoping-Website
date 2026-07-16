@@ -1,0 +1,222 @@
+/* =========================================================
+   admin-page.css — Admin Payment Management page
+   Note: this page's <head> only links style.css — add
+   <link rel="stylesheet" href="css/admin-page.css"> after it.
+   ========================================================= */
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.container h1 { font-size: 24px; margin-bottom: 6px; }
+.container > p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 26px;
+}
+
+/* ---------- Table shell ---------- */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.table thead th {
+  background: var(--navy-deep);
+  color: #fff;
+  text-align: left;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+}
+.table thead th:first-child { border-top-left-radius: var(--radius); }
+.table thead th:last-child  { border-top-right-radius: var(--radius); }
+
+.table tbody tr {
+  animation: rowIn .25s ease both;
+  transition: background-color .15s ease;
+}
+.table tbody tr:nth-child(even) { background: #FAFBFD; }
+.table tbody tr:hover { background: #F1F4FA; }
+.table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--line); }
+
+.table td {
+  padding: 13px 16px;
+  font-size: 13.5px;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+/* Order ID column: monospace, easier to scan/copy */
+.table td:first-child {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--navy-deep);
+  font-weight: 600;
+}
+
+/* Amount column */
+.table td:nth-child(3) {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  color: var(--navy-deep);
+}
+
+/* Payment / Status columns rendered as soft pills */
+.table td:nth-child(4),
+.table td:nth-child(5) {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.table td:nth-child(4) span,
+.table td:nth-child(5) span,
+.table td:nth-child(4),
+.table td:nth-child(5) {
+  white-space: nowrap;
+}
+.table td:nth-child(4)::before,
+.table td:nth-child(5)::before {
+  content: "";
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 7px;
+  background: var(--text-muted);
+  vertical-align: middle;
+}
+
+/* Loading row */
+.table td[colspan="6"] {
+  text-align: center;
+  padding: 34px 16px;
+  color: var(--text-muted);
+  position: relative;
+  padding-left: 40px;
+}
+.table td[colspan="6"]::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -34px;
+  top: 50%;
+  margin-top: -7px;
+  width: 14px; height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+/* ---------- Action buttons ---------- */
+.table td:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.table .btn,
+.table .btn-success,
+.table .btn-danger {
+  padding: 8px 14px;
+  font-size: 12.5px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.table .btn:hover,
+.table .btn-success:hover,
+.table .btn-danger:hover {
+  transform: translateY(-1px);
+}
+.table .btn:active,
+.table .btn-success:active,
+.table .btn-danger:active {
+  transform: translateY(0);
+}
+
+/* Bare .btn (Ship / Deliver) — style.css defines no default color for it */
+.table .btn {
+  background: #EEF1F8;
+  color: var(--navy-deep);
+  border: 1px solid var(--line);
+}
+.table .btn:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.table .btn-success {
+  background: var(--success);
+  color: #fff;
+}
+.table .btn-success:hover { background: #178049; }
+
+.table .btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.table .btn-danger:hover { background: #B93636; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .table thead { display: none; }
+  .table, .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+  .table tbody tr {
+    margin-bottom: 14px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .table td {
+    padding: 10px 16px;
+    border-bottom: none !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .table td:first-child::before  { content: "Order ID"; }
+  .table td:nth-child(2)::before { content: "Customer"; }
+  .table td:nth-child(3)::before { content: "Amount"; }
+  .table td:nth-child(4)::before { content: "Payment"; margin-right: 7px; background: none; width: auto; height: auto; }
+  .table td:nth-child(5)::before { content: "Status"; margin-right: 7px; background: none; width: auto; height: auto; }
+  .table td:first-child::before,
+  .table td:nth-child(2)::before,
+  .table td:nth-child(3)::before {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .table td:last-child {
+    justify-content: flex-start;
+    background: #FAFBFD;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table tbody tr, .table td[colspan="6"]::before {
+    animation: none !important;
+  }
+}

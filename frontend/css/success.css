@@ -1,0 +1,146 @@
+/* =========================================================
+   success.css — Order Success page
+   Note: this page's <head> only links style.css — add
+   <link rel="stylesheet" href="css/success.css"> after it.
+   ========================================================= */
+
+@keyframes successIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes checkPop {
+  0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+  55%  { transform: scale(1.2) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes ringPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(30,158,90,0.28); }
+  100% { box-shadow: 0 0 0 22px rgba(30,158,90,0); }
+}
+
+.success-card {
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  padding: 44px 42px 38px;
+  position: relative;
+  overflow: hidden;
+  animation: successIn .4s ease both;
+}
+.success-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--success) 0%, var(--navy) 60%, var(--amber) 100%);
+}
+
+/* ---------- Checkmark emoji block ---------- */
+.success-card > div:first-child {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #EAF7EF;
+  animation: checkPop .5s cubic-bezier(.22,1,.36,1) both, ringPulse 1.8s ease-out .5s;
+  line-height: 1;
+}
+
+/* ---------- Heading + subtext ---------- */
+.success-card h1 {
+  font-size: 24px;
+  margin: 4px 0 8px;
+}
+.success-card > p:first-of-type {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 26px;
+}
+
+.success-card hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0 0 22px;
+}
+
+.success-card h2 {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+/* ---------- Order detail rows ---------- */
+.success-card p {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+  margin: 0;
+}
+.success-card p:last-of-type {
+  border-bottom: none;
+}
+.success-card p strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+#orderId {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  color: var(--navy-deep);
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ---------- Action buttons ---------- */
+.success-card .btn {
+  flex: 1;
+  justify-content: center;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.success-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(232,163,61,0.3);
+}
+.btn-secondary {
+  background: #EEF1F8;
+  color: var(--navy-deep);
+}
+.btn-secondary:hover {
+  background: var(--navy);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+  .success-card {
+    padding: 34px 24px 28px;
+  }
+  .success-card > div:first-child {
+    width: 90px;
+    height: 90px;
+    font-size: 60px !important;
+  }
+  .success-card p {
+    flex-direction: column;
+    gap: 2px;
+  }
+  #orderId { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-card,
+  .success-card > div:first-child {
+    animation: none !important;
+  }
+}

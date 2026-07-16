@@ -1,0 +1,244 @@
+/* =========================================================
+   payment.css — UPI Payment page
+   Extends style.css design tokens (navy / amber / Sora+Inter).
+   ========================================================= */
+
+@keyframes paymentIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes qrPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,163,61,0.35); }
+  50%      { box-shadow: 0 0 0 10px rgba(232,163,61,0); }
+}
+@keyframes timerTick {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes dotBlink {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+
+.payment-container {
+  max-width: 880px;
+  margin: 0 auto;
+  animation: paymentIn .4s ease both;
+}
+
+.payment-container h1 {
+  font-size: 26px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.payment-container > .container > p,
+.payment-container > p {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0 0 28px;
+}
+
+/* ---------- Card shell ---------- */
+.payment-card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  position: relative;
+}
+.payment-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--amber) 0%, var(--navy) 60%, var(--blue) 100%);
+}
+
+/* ---------- Left: QR panel ---------- */
+.payment-left {
+  padding: 40px 36px;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  background: #FBFBFD;
+}
+.payment-left h2 {
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+.payment-left h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 22px 0 8px;
+}
+
+#paymentQR {
+  width: 220px !important;
+  height: 220px !important;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  animation: qrPulse 2.4s ease-in-out infinite;
+}
+
+#upiId {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy-deep);
+  background: #EEF1F8;
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  word-break: break-all;
+}
+
+/* ---------- Right: order summary + actions ---------- */
+.payment-right {
+  padding: 40px 36px;
+}
+.payment-right h2 {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+.payment-right h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 20px 0 12px;
+}
+.payment-right hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
+#orderSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--text);
+}
+#orderSummary > * {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+}
+
+.summary-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.summary-total h2 {
+  margin: 0;
+  font-size: 17px;
+}
+#totalAmount {
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--navy-deep);
+  font-size: 22px;
+}
+
+/* ---------- UPI app buttons ---------- */
+.upi-apps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.btn-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  background: #F6F7FA;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: border-color .15s ease, transform .15s ease, background-color .15s ease;
+}
+.btn-light:hover {
+  border-color: var(--amber);
+  background: #FBF6EC;
+  transform: translateY(-2px);
+}
+.btn-light:active { transform: translateY(0); }
+
+/* ---------- Countdown / status box ---------- */
+.countdown-box {
+  text-align: center;
+  background: #EEF1F8;
+  border: 1px dashed #C3CBE0;
+  border-radius: 10px;
+  padding: 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--blue);
+  position: relative;
+}
+.countdown-box::before {
+  content: "";
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  margin-right: 6px;
+  animation: dotBlink 1.2s ease-in-out infinite;
+  vertical-align: middle;
+}
+#timer {
+  display: inline-block;
+  animation: timerTick 1s ease-in-out infinite;
+}
+
+/* ---------- Success button ---------- */
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  transition: background-color .18s ease, transform .12s ease;
+}
+.btn-success:hover { background: #178049; }
+.btn-success:active { transform: translateY(1px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  .payment-card {
+    grid-template-columns: 1fr;
+  }
+  .payment-left {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 32px 24px;
+  }
+  .payment-right {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container h1 { font-size: 22px; }
+  .payment-left, .payment-right { padding: 26px 18px; }
+  #paymentQR { width: 190px !important; height: 190px !important; }
+  .upi-apps { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn-light { font-size: 12.5px; padding: 10px; }
+  .summary-total h2 { font-size: 15px; }
+  #totalAmount { font-size: 19px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .payment-container, #paymentQR, #timer, .countdown-box::before {
+    animation: none !important;
+  }
+}

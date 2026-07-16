@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Admin Payments - Market</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div id="headerMount"></div>
+
+<main class="section">
+
+<div class="container">
+
+<h1>
+
+Payment Management
+
+</h1>
+
+<p>
+
+Approve or Reject Customer Payments
+
+</p>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Order ID</th>
+
+<th>Customer</th>
+
+<th>Amount</th>
+
+<th>Payment</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="paymentTable">
+
+<tr>
+
+<td colspan="6">
+
+Loading...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+
+const API=
+
+"https://shopping-backend-s8l8.onrender.com/api/admin/payment";
+
+loadPayments();
+
+async function loadPayments(){
+
+const res=await fetch(API);
+
+const data=await res.json();
+
+const table=document.getElementById("paymentTable");
+
+table.innerHTML="";
+
+data.payments.forEach(order=>{
+
+table.innerHTML+=`
+
+<tr>
+
+<td>
+
+${order.order_id}
+
+</td>
+
+<td>
+
+${order.customer}
+
+</td>
+
+<td>
+
+₹${order.amount}
+
+</td>
+
+<td>
+
+${order.payment_status}
+
+</td>
+
+<td>
+
+${order.order_status}
+
+</td>
+
+<td>
+
+<button
+
+onclick="approve('${order.order_id}')"
+
+class="btn btn-success">
+
+Approve
+
+</button>
+
+<button
+
+onclick="reject('${order.order_id}')"
+
+class="btn btn-danger">
+
+Reject
+
+</button>
+
+<button
+
+onclick="ship('${order.order_id}')"
+
+class="btn">
+
+Ship
+
+</button>
+
+<button
+
+onclick="deliver('${order.order_id}')"
+
+class="btn">
+
+Deliver
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+async function approve(id){
+
+await fetch(
+
+API+"/approve/"+id,
+
+{
+
+method:"PUT"
+
+}
+
+);
+
+loadPayments();
+
+}
+
+async function reject(id){
+
+await fetch(
+
+API+"/reject/"+id,
+
+{
+
+method:"PUT"
+
+}
+
+);
+
+loadPayments();
+
+}
+
+async function ship(id){
+
+await fetch(
+
+API+"/ship/"+id,
+
+{
+
+method:"PUT"
+
+}
+
+);
+
+loadPayments();
+
+}
+
+async function deliver(id){
+
+await fetch(
+
+API+"/deliver/"+id,
+
+{
+
+method:"PUT"
+
+}
+
+);
+
+loadPayments();
+
+}
+
+</script>
+
+</body>
+
+</html>

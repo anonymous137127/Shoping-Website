@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Order Successful - Market</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<a href="#main" class="skip-link">
+
+Skip to content
+
+</a>
+
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+
+<div class="container">
+
+<div class="success-card">
+
+<div style="font-size:90px;text-align:center;">
+
+✅
+
+</div>
+
+<h1 style="text-align:center;">
+
+Order Placed Successfully
+
+</h1>
+
+<p style="text-align:center;">
+
+Thank you for shopping with Market.
+
+</p>
+
+<hr>
+
+<h2>
+
+Order Details
+
+</h2>
+
+<p>
+
+<strong>Order ID :</strong>
+
+<span id="orderId">
+
+Loading...
+
+</span>
+
+</p>
+
+<p>
+
+<strong>Payment :</strong>
+
+Pending Verification
+
+</p>
+
+<p>
+
+<strong>Status :</strong>
+
+Pending Confirmation
+
+</p>
+
+<p>
+
+<strong>Estimated Delivery :</strong>
+
+3 - 4 Business Days
+
+</p>
+
+<div
+style="margin-top:30px;display:flex;gap:15px;flex-wrap:wrap;">
+
+<a
+href="orders.html"
+class="btn btn-primary">
+
+View My Orders
+
+</a>
+
+<a
+href="shop.html"
+class="btn btn-secondary">
+
+Continue Shopping
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+
+const params=new URLSearchParams(window.location.search);
+
+const orderId=params.get("order");
+
+if(orderId){
+
+document.getElementById("orderId").innerHTML=orderId;
+
+}else{
+
+document.getElementById("orderId").innerHTML="Not Available";
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>UPI Payment - Market</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/payment.css">
+
+</head>
+
+<body>
+
+<a href="#main" class="skip-link">
+
+Skip to content
+
+</a>
+
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+
+<div class="container">
+
+<div class="payment-container">
+
+<h1>
+
+Secure Payment
+
+</h1>
+
+<p>
+
+Complete your payment using any UPI App.
+
+</p>
+
+<div class="payment-card">
+
+<div class="payment-left">
+
+<h2>
+
+Scan QR Code
+
+</h2>
+
+<img
+
+id="paymentQR"
+
+src=""
+
+alt="UPI QR Code"
+
+style="width:280px;height:280px;border:1px solid #ddd;border-radius:12px;">
+
+<h3>
+
+UPI ID
+
+</h3>
+
+<p id="upiId"></p>
+
+</div>
+
+<div class="payment-right">
+
+<h2>
+
+Order Summary
+
+</h2>
+
+<div id="orderSummary">
+
+</div>
+
+<hr>
+
+<div class="summary-total">
+
+<h2>
+
+Total
+
+</h2>
+
+<h2 id="totalAmount">
+
+₹0
+
+</h2>
+
+</div>
+
+<hr>
+
+<h3>
+
+Supported UPI Apps
+
+</h3>
+
+<div class="upi-apps">
+
+<button class="btn btn-light">
+
+📱 PhonePe
+
+</button>
+
+<button class="btn btn-light">
+
+🟢 Google Pay
+
+</button>
+
+<button class="btn btn-light">
+
+💙 Paytm
+
+</button>
+
+<button class="btn btn-light">
+
+🏦 BHIM
+
+</button>
+
+</div>
+
+<br>
+
+<div class="countdown-box">
+
+Checking Payment...
+
+<br><br>
+
+<span
+
+id="timer"
+
+style="font-size:35px;font-weight:bold;color:#1E88E5;">
+
+5
+
+</span>
+
+</div>
+
+<br>
+
+<button
+
+class="btn btn-success btn-block"
+
+onclick="paymentCompleted()">
+
+I Have Completed Payment
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
