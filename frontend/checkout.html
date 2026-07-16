@@ -28,6 +28,8 @@ Skip to content
 
 <div class="container">
 
+<div class="checkout-container">
+
 <h1>
 
 Checkout
@@ -44,11 +46,7 @@ Please enter your delivery details.
 
 <div class="form-group">
 
-<label>
-
-Full Name
-
-</label>
+<label>Full Name</label>
 
 <input
 type="text"
@@ -59,11 +57,7 @@ required>
 
 <div class="form-group">
 
-<label>
-
-Phone Number
-
-</label>
+<label>Phone Number</label>
 
 <input
 type="tel"
@@ -74,28 +68,20 @@ required>
 
 <div class="form-group">
 
-<label>
-
-Delivery Address
-
-</label>
+<label>Delivery Address</label>
 
 <textarea
 id="address"
 rows="4"
-required>
-
-</textarea>
+required></textarea>
 
 </div>
 
+<div class="form-row">
+
 <div class="form-group">
 
-<label>
-
-City
-
-</label>
+<label>City</label>
 
 <input
 type="text"
@@ -106,11 +92,7 @@ required>
 
 <div class="form-group">
 
-<label>
-
-State
-
-</label>
+<label>State</label>
 
 <input
 type="text"
@@ -119,17 +101,16 @@ required>
 
 </div>
 
+</div>
+
 <div class="form-group">
 
-<label>
-
-Pincode
-
-</label>
+<label>Pincode</label>
 
 <input
 type="text"
 id="pincode"
+maxlength="6"
 required>
 
 </div>
@@ -146,11 +127,15 @@ Continue To Payment
 
 </div>
 
+</div>
+
 </main>
 
 <div id="footerMount"></div>
 
 <script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/navbar.js"></script>
@@ -159,37 +144,76 @@ Continue To Payment
 
 <script>
 
-const form = document.getElementById("checkoutForm");
+// User must be logged in
+if(!isLoggedIn()){
 
-form.addEventListener("submit", function(e){
+alert("Please login first.");
+
+window.location.href="login.html";
+
+}
+
+// Cart must not be empty
+const cart = JSON.parse(localStorage.getItem("market_cart_v1") || "{}");
+
+if(Object.keys(cart).length===0){
+
+alert("Your cart is empty.");
+
+window.location.href="cart.html";
+
+}
+
+// Prefill user name
+const user = getUser();
+
+if(user){
+
+document.getElementById("fullname").value=user.fullname || "";
+
+}
+
+document
+.getElementById("checkoutForm")
+.addEventListener("submit",function(e){
 
 e.preventDefault();
 
-const delivery = {
+const pincode=document.getElementById("pincode").value.trim();
+
+if(pincode.length!==6){
+
+alert("Please enter a valid 6-digit pincode.");
+
+return;
+
+}
+
+const delivery={
 
 fullname:
 
-document.getElementById("fullname").value,
+document.getElementById("fullname").value.trim(),
 
 phone:
 
-document.getElementById("phone").value,
+document.getElementById("phone").value.trim(),
 
 address:
 
-document.getElementById("address").value,
+document.getElementById("address").value.trim(),
 
 city:
 
-document.getElementById("city").value,
+document.getElementById("city").value.trim(),
 
 state:
 
-document.getElementById("state").value,
+document.getElementById("state").value.trim(),
 
 pincode:
 
-document.getElementById("pincode").value
+pincode
 
 };
 
