@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop All Products — Market</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div id="headerMount"></div>
+
+<main id="main" class="section">
+  <div class="container">
+    <div class="shop-layout">
+      <aside class="filter-box">
+        <h4>Category</h4>
+        <div id="catFilters"></div>
+        <h4 style="margin-top:20px;">Max Price</h4>
+        <input type="range" id="priceRange" min="300" max="9000" value="9000" step="100" style="width:100%;" oninput="renderShop()">
+        <div id="priceLabel" style="font-size:13px; color:var(--text-muted); margin-top:6px;"></div>
+        <h4 style="margin-top:20px;">Min Rating</h4>
+        <div id="ratingFilters"></div>
+      </aside>
+      <div>
+        <div class="results-bar">
+          <span id="resultsCount"></span>
+          <select id="sortSelect" onchange="renderShop()">
+            <option value="relevance">Sort: Relevance</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
+          </select>
+        </div>
+        <div class="product-grid" id="shopGrid"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  let activeCat = params.get("cat") || "all";
+  let activeRating = 0;
+  const searchQuery = (params.get("q") || "").toLowerCase();
+
+  function renderFilters() {
+    document.getElementById("catFilters").innerHTML = `
+      <label class="filter-option"><input type="radio" name="cat" ${activeCat === "all" ? "checked" : ""} onchange="setCat('all')"> All</label>
+      ${CATEGORIES.map(c => `<label class="filter-option"><input type="radio" name="cat" ${activeCat === c.id ? "checked" : ""} onchange="setCat('${c.id}')"> ${c.name}</label>`).join("")}
+    `;
+    document.getElementById("ratingFilters").innerHTML = [4, 3, 0].map(r => `
+      <label class="filter-option"><input type="radio" name="rating" ${activeRating === r ? "checked" : ""} onchange="setRating(${r})"> ${r > 0 ? r + "★ & up" : "Any rating"}</label>
+    `).join("");
+  }
+
+  function setCat(id) { activeCat = id; renderShop(); }
+  function setRating(r) { activeRating = r; renderShop(); }
+
+  function renderShop() {
+    renderFilters();
+    const maxPrice = Number(document.getElementById("priceRange").value);
+    document.getElementById("priceLabel").textContent = "Up to " + formatINR(maxPrice);
+
+    let list = PRODUCTS.filter(p =>
+      (activeCat === "all" || p.category === activeCat) &&
+      p.price <= maxPrice &&
+      p.rating >= activeRating &&
+      (searchQuery === "" || p.name.toLowerCase().includes(searchQuery) || p.category.includes(searchQuery))
+    );
+
+    const sort = document.getElementById("sortSelect").value;
+    if (sort === "price-low") list.sort((a, b) => a.price - b.price);
+    if (sort === "price-high") list.sort((a, b) => b.price - a.price);
+    if (sort === "rating") list.sort((a, b) => b.rating - a.rating);
+
+    document.getElementById("resultsCount").textContent = `${list.length} result${list.length !== 1 ? "s" : ""}${searchQuery ? ` for "${searchQuery}"` : ""}`;
+    document.getElementById("shopGrid").innerHTML = list.length
+      ? list.map(productCardHTML).join("")
+      : `<div class="empty-state" style="grid-column:1/-1;"><h3>No products match these filters</h3><p>Try widening your price range or clearing a filter.</p></div>`;
+  }
+
+  renderShop();
+</script>
+</body>
+</html>

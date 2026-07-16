@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market — Shop Electronics, Fashion, Home & More</title>
+<meta name="description" content="Market is your one-stop shop for electronics, fashion, home, beauty, sports and books at unbeatable prices.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div id="headerMount"></div>
+
+<main id="main">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="hero-eyebrow">● DEAL OF THE DAY</span>
+        <h1>Everything you need, priced like it's on sale every day.</h1>
+        <p>Browse electronics, fashion, home essentials, beauty, sports gear and books — all in one place, with fast delivery and easy returns.</p>
+        <div class="hero-ctas">
+          <a href="shop.html" class="btn btn-primary">Start Shopping</a>
+          <a href="#categories" class="btn btn-ghost">Browse Categories</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>21</b><span>Products live</span></div>
+          <div class="hero-stat"><b>6</b><span>Categories</span></div>
+          <div class="hero-stat"><b>4.4</b><span>Avg. rating</span></div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="ticket">
+          <div class="sku" style="margin-bottom:6px;">SKU ELE-1002</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:22px; color:#14213D;">₹6,999</div>
+          <div style="font-size:11px; color:#6B7280; text-decoration:line-through;">₹9,999</div>
+          <div style="font-size:11px; color:#1E9E5A; font-weight:700; margin-top:4px;">30% OFF today</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="container">
+      <div class="section-head"><h2>Shop by Category</h2></div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Bestsellers</h2>
+        <a href="shop.html">View all →</a>
+      </div>
+      <div class="product-grid" id="bestsellerGrid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>New Arrivals</h2>
+        <a href="shop.html">View all →</a>
+      </div>
+      <div class="product-grid" id="newGrid"></div>
+    </div>
+  </section>
+</main>
+
+<div id="footerMount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.getElementById("catGrid").innerHTML = CATEGORIES.map(c => `
+    <a href="shop.html?cat=${c.id}" class="cat-card">
+      <div class="cat-icon">${ICONS[c.icon]}</div>
+      <span>${c.name}</span>
+    </a>`).join("");
+
+  document.getElementById("bestsellerGrid").innerHTML =
+    PRODUCTS.filter(p => p.tag === "Bestseller").slice(0, 4).map(productCardHTML).join("");
+
+  document.getElementById("newGrid").innerHTML =
+    PRODUCTS.filter(p => p.tag === "New").concat(PRODUCTS.slice(0, 2)).slice(0, 4).map(productCardHTML).join("");
+</script>
+</body>
+</html>
