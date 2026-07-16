@@ -6,22 +6,18 @@ const UPI_ID = "BHARATPE2O0D0U6X3M52305@unitype";
 const MERCHANT_NAME = "Nandi Groups";
 
 document.addEventListener("DOMContentLoaded", () => {
-
     loadPayment();
-
 });
 
 // =====================================
-// LOAD PAYMENT PAGE
+// LOAD PAYMENT
 // =====================================
 
 function loadPayment() {
 
     const cart = JSON.parse(localStorage.getItem("market_cart_v1") || "{}");
 
-    const ids = Object.keys(cart);
-
-    if (ids.length === 0) {
+    if (Object.keys(cart).length === 0) {
 
         alert("Your cart is empty.");
 
@@ -35,7 +31,7 @@ function loadPayment() {
 
     let html = "";
 
-    ids.forEach(id => {
+    Object.keys(cart).forEach(id => {
 
         const product = getProductById(id);
 
@@ -48,10 +44,15 @@ function loadPayment() {
         total += subtotal;
 
         html += `
+
         <div class="summary-item">
+
             <span>${product.name} × ${qty}</span>
+
             <span>₹${subtotal.toLocaleString("en-IN")}</span>
+
         </div>
+
         `;
 
     });
@@ -70,21 +71,23 @@ function loadPayment() {
 }
 
 // =====================================
-// GENERATE QR
+// QR
 // =====================================
 
 function generateQR(amount) {
 
-    const upiLink =
+    const upi =
+
         `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amount}&cu=INR`;
 
     document.getElementById("paymentQR").src =
-        `https://quickchart.io/qr?size=300&text=${encodeURIComponent(upiLink)}`;
+
+        `https://quickchart.io/qr?size=300&text=${encodeURIComponent(upi)}`;
 
 }
 
 // =====================================
-// COUNTDOWN
+// TIMER
 // =====================================
 
 function countdown() {
@@ -121,7 +124,7 @@ function countdown() {
 
 async function paymentCompleted() {
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
     if (!token) {
 
@@ -133,11 +136,15 @@ async function paymentCompleted() {
 
     }
 
-    const delivery = JSON.parse(localStorage.getItem("delivery") || "{}");
+    const delivery = JSON.parse(
+
+        localStorage.getItem("delivery") || "{}"
+
+    );
 
     if (!delivery.address) {
 
-        alert("Delivery address not found.");
+        alert("Please complete checkout.");
 
         window.location.href = "checkout.html";
 
@@ -145,15 +152,47 @@ async function paymentCompleted() {
 
     }
 
-    const btn = document.getElementById("paymentBtn");
+    const cart = JSON.parse(
 
-    if (btn) {
+        localStorage.getItem("market_cart_v1") || "{}"
 
-        btn.disabled = true;
+    );
 
-        btn.innerHTML = "Processing...";
+    let products = [];
+
+    Object.keys(cart).forEach(id => {
+
+        const product = getProductById(id);
+
+        if (!product) return;
+
+        products.push({
+
+            product_id: product.id,
+
+            name: product.name,
+
+            price: product.price,
+
+            quantity: cart[id]
+
+        });
+
+    });
+
+    if (products.length === 0) {
+
+        alert("Cart is empty.");
+
+        return;
 
     }
+
+    const btn = document.getElementById("paymentBtn");
+
+    btn.disabled = true;
+
+    btn.innerHTML = "Processing...";
 
     try {
 
@@ -181,7 +220,9 @@ ${delivery.city},
 ${delivery.state},
 ${delivery.pincode}`,
 
-                    payment_method: "UPI"
+                    payment_method: "UPI",
+
+                    products: products
 
                 })
 
@@ -191,12 +232,18 @@ ${delivery.pincode}`,
 
         const data = await response.json();
 
-        if (data.success) {
+        console.log(data);
+
+        if (response.ok && data.success) {
 
             localStorage.removeItem("market_cart_v1");
+
             localStorage.removeItem("delivery");
 
+            alert("Order placed successfully!");
+
             window.location.href =
+
                 "success.html?order=" + data.order_id;
 
         } else {
@@ -209,16 +256,12 @@ ${delivery.pincode}`,
 
         console.error(err);
 
-        alert("Unable to connect to the server.");
+        alert("Server connection failed.");
 
     }
 
-    if (btn) {
+    btn.disabled = false;
 
-        btn.disabled = false;
-
-        btn.innerHTML = "I Have Completed Payment";
-
-    }
+    btn.innerHTML = "I Have Completed Payment";
 
 }

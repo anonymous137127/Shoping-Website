@@ -3,9 +3,7 @@ from bson import ObjectId
 from datetime import datetime
 
 from database import (
-    orders_collection,
-    cart_collection,
-    products_collection
+    orders_collection
 )
 
 from middleware.jwt import token_required
@@ -15,6 +13,7 @@ orders_bp = Blueprint(
     __name__,
     url_prefix="/api/orders"
 )
+
 
 # =====================================
 # PLACE ORDER
@@ -28,12 +27,15 @@ def place_order(current_user):
 
     address = data.get("address")
     payment_method = data.get("payment_method", "UPI")
+    products = data.get("products", [])
 
-    cart_items = list(cart_collection.find({
-        "user_email": current_user["email"]
-    }))
+    if not address:
+        return jsonify({
+            "success": False,
+            "message": "Address is required"
+        }), 400
 
-    if len(cart_items) == 0:
+    if len(products) == 0:
         return jsonify({
             "success": False,
             "message": "Cart is empty"
@@ -42,26 +44,19 @@ def place_order(current_user):
     order_products = []
     total_amount = 0
 
-    for item in cart_items:
+    for item in products:
 
-        product = products_collection.find_one({
-            "_id": ObjectId(item["product_id"])
-        })
-
-        if not product:
-            continue
-
-        quantity = int(item["quantity"])
-
-        subtotal = float(product["price"]) * quantity
+        quantity = int(item.get("quantity", 1))
+        price = float(item.get("price", 0))
+        subtotal = quantity * price
 
         total_amount += subtotal
 
         order_products.append({
 
-            "product_id": str(product["_id"]),
-            "name": product["name"],
-            "price": product["price"],
+            "product_id": item.get("product_id"),
+            "name": item.get("name"),
+            "price": price,
             "quantity": quantity,
             "subtotal": subtotal
 
@@ -70,39 +65,23 @@ def place_order(current_user):
     order = {
 
         "user_email": current_user["email"],
-
         "fullname": current_user["fullname"],
-
         "address": address,
-
         "products": order_products,
-
         "payment_method": payment_method,
-
         "payment_status": "Pending",
-
-        "total": total_amount,
-
         "status": "Pending",
-
+        "total": total_amount,
         "ordered_at": datetime.utcnow()
 
     }
 
     result = orders_collection.insert_one(order)
 
-    cart_collection.delete_many({
-
-        "user_email": current_user["email"]
-
-    })
-
     return jsonify({
 
         "success": True,
-
-        "message": "Order placed successfully. Waiting for payment verification.",
-
+        "message": "Order placed successfully.",
         "order_id": str(result.inserted_id)
 
     }), 201
@@ -131,9 +110,7 @@ def my_orders(current_user):
     return jsonify({
 
         "success": True,
-
         "count": len(orders),
-
         "orders": orders
 
     })
@@ -150,17 +127,13 @@ def single_order(current_user, order_id):
     if not ObjectId.is_valid(order_id):
 
         return jsonify({
-
             "success": False,
-
             "message": "Invalid Order ID"
-
         }), 400
 
     order = orders_collection.find_one({
 
         "_id": ObjectId(order_id),
-
         "user_email": current_user["email"]
 
     })
@@ -168,11 +141,8 @@ def single_order(current_user, order_id):
     if not order:
 
         return jsonify({
-
             "success": False,
-
             "message": "Order Not Found"
-
         }), 404
 
     order["_id"] = str(order["_id"])
@@ -180,7 +150,6 @@ def single_order(current_user, order_id):
     return jsonify({
 
         "success": True,
-
         "order": order
 
     })
@@ -197,17 +166,13 @@ def cancel_order(current_user, order_id):
     if not ObjectId.is_valid(order_id):
 
         return jsonify({
-
             "success": False,
-
             "message": "Invalid Order ID"
-
         }), 400
 
     order = orders_collection.find_one({
 
         "_id": ObjectId(order_id),
-
         "user_email": current_user["email"]
 
     })
@@ -215,39 +180,27 @@ def cancel_order(current_user, order_id):
     if not order:
 
         return jsonify({
-
             "success": False,
-
             "message": "Order Not Found"
-
         }), 404
 
     if order["status"] in ["Delivered", "Cancelled"]:
 
         return jsonify({
-
             "success": False,
-
             "message": "Order cannot be cancelled"
-
         }), 400
 
     orders_collection.update_one(
 
         {
-
             "_id": ObjectId(order_id)
-
         },
 
         {
-
             "$set": {
-
                 "status": "Cancelled"
-
             }
-
         }
 
     )
@@ -255,7 +208,6 @@ def cancel_order(current_user, order_id):
     return jsonify({
 
         "success": True,
-
         "message": "Order Cancelled"
 
     })
@@ -271,11 +223,8 @@ def update_status(order_id):
     if not ObjectId.is_valid(order_id):
 
         return jsonify({
-
             "success": False,
-
             "message": "Invalid Order ID"
-
         }), 400
 
     data = request.get_json()
@@ -283,19 +232,16 @@ def update_status(order_id):
     orders_collection.update_one(
 
         {
-
             "_id": ObjectId(order_id)
-
         },
 
         {
-
             "$set": {
 
-                "status": data.get("status")
+                "status": data.get("status"),
+                "payment_status": data.get("payment_status", "Approved")
 
             }
-
         }
 
     )
@@ -303,7 +249,6 @@ def update_status(order_id):
     return jsonify({
 
         "success": True,
-
         "message": "Order Status Updated"
 
     })
