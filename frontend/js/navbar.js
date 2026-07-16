@@ -1,5 +1,5 @@
 // =====================================
-// Navbar
+// NAVBAR
 // =====================================
 
 function loadNavbar() {
@@ -10,7 +10,7 @@ function loadNavbar() {
 
     const token = localStorage.getItem("token");
 
-    const loggedIn = token !== null;
+    const loggedIn = !!token;
 
     let user = {};
 
@@ -32,7 +32,7 @@ function loadNavbar() {
 
 <a href="index.html" class="logo">
 
-🛒 Market
+🛒 <strong>Market</strong>
 
 </a>
 
@@ -44,62 +44,57 @@ function loadNavbar() {
 
 <a href="search.html">Search</a>
 
-<a href="cart.html">
-
-Cart
-
-<span id="cartCount" class="badge">0</span>
-
-</a>
-
 <a href="wishlist.html">
 
-Wishlist
+❤️ Wishlist
 
 <span id="wishlistCount" class="badge">0</span>
 
 </a>
 
-${
-loggedIn ?
+<a href="cart.html">
 
-`
+🛒 Cart
 
-<a href="orders.html">Orders</a>
+<span id="cartCount" class="badge">0</span>
+
+</a>
+
+${loggedIn ? `
+
+<a href="orders.html">
+
+📦 Orders
+
+</a>
 
 <a href="profile.html">
 
-${user.fullname || "Profile"}
+👤 ${user.fullname || "Profile"}
 
 </a>
 
 <a href="#" id="logoutBtn">
 
-Logout
+🚪 Logout
 
 </a>
 
-`
-
-:
-
-`
+` : `
 
 <a href="login.html">
 
-Login
+🔐 Login
 
 </a>
 
 <a href="register.html">
 
-Register
+📝 Register
 
 </a>
 
-`
-
-}
+`}
 
 </nav>
 
@@ -109,6 +104,7 @@ Register
 
 `;
 
+    // Logout
     const logoutBtn = document.getElementById("logoutBtn");
 
     if (logoutBtn) {
@@ -117,8 +113,12 @@ Register
 
             e.preventDefault();
 
+            if (!confirm("Are you sure you want to logout?")) return;
+
             localStorage.removeItem("token");
             localStorage.removeItem("user");
+            localStorage.removeItem("market_cart_v1");
+            localStorage.removeItem("market_wishlist");
 
             window.location.href = "login.html";
 
@@ -141,16 +141,18 @@ Register
 }
 
 // =====================================
-// Active Menu
+// ACTIVE MENU
 // =====================================
 
 function activeNavbar() {
 
-    const current = window.location.pathname.split("/").pop();
+    const current = window.location.pathname.split("/").pop() || "index.html";
 
     document.querySelectorAll(".nav-links a").forEach(link => {
 
-        if (link.getAttribute("href") === current) {
+        const href = link.getAttribute("href");
+
+        if (href === current) {
 
             link.classList.add("active");
 
@@ -159,6 +161,10 @@ function activeNavbar() {
     });
 
 }
+
+// =====================================
+// INIT
+// =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
 

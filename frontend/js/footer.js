@@ -1,5 +1,5 @@
 // =====================================
-// Footer
+// FOOTER
 // =====================================
 
 function loadFooter() {
@@ -18,7 +18,7 @@ function loadFooter() {
 
 <div class="footer-grid">
 
-<div>
+<div class="footer-section">
 
 <h2 class="footer-logo">
 
@@ -32,15 +32,15 @@ Your trusted online shopping destination.
 
 Shop Electronics, Fashion, Home,
 
-Beauty, Sports and more at the
+Beauty, Sports, Books and much more
 
-best prices.
+at the best prices.
 
 </p>
 
 </div>
 
-<div>
+<div class="footer-section">
 
 <h3>
 
@@ -50,19 +50,21 @@ Quick Links
 
 <ul class="footer-links">
 
-<li><a href="index.html">Home</a></li>
+<li><a href="index.html">🏠 Home</a></li>
 
-<li><a href="shop.html">Shop</a></li>
+<li><a href="shop.html">🛍 Shop</a></li>
 
-<li><a href="search.html">Search</a></li>
+<li><a href="search.html">🔍 Search</a></li>
 
-<li><a href="cart.html">Cart</a></li>
+<li><a href="cart.html">🛒 Cart</a></li>
+
+<li><a href="checkout.html">💳 Checkout</a></li>
 
 </ul>
 
 </div>
 
-<div>
+<div class="footer-section">
 
 <h3>
 
@@ -72,23 +74,25 @@ Customer
 
 <ul class="footer-links">
 
-<li><a href="orders.html">Orders</a></li>
+<li><a href="orders.html">📦 Orders</a></li>
 
-<li><a href="wishlist.html">Wishlist</a></li>
+<li><a href="wishlist.html">❤️ Wishlist</a></li>
 
-<li><a href="profile.html">Profile</a></li>
+<li><a href="profile.html">👤 Profile</a></li>
 
-<li><a href="login.html">Login</a></li>
+<li><a href="login.html">🔐 Login</a></li>
+
+<li><a href="register.html">📝 Register</a></li>
 
 </ul>
 
 </div>
 
-<div>
+<div class="footer-section">
 
 <h3>
 
-Contact
+Support
 
 </h3>
 
@@ -98,6 +102,8 @@ Contact
 
 <p>📍 Bengaluru, Karnataka, India</p>
 
+<p>🕒 Mon - Sat : 9:00 AM - 6:00 PM</p>
+
 </div>
 
 </div>
@@ -106,11 +112,25 @@ Contact
 
 <div class="footer-bottom">
 
-<p>
+<div>
 
 © ${year} Market. All Rights Reserved.
 
-</p>
+</div>
+
+<div>
+
+<a href="#">Privacy Policy</a>
+
+|
+
+<a href="#">Terms & Conditions</a>
+
+|
+
+<a href="#">Refund Policy</a>
+
+</div>
 
 </div>
 
@@ -123,7 +143,17 @@ Contact
 }
 
 // =====================================
-// Initialize Footer
+// INITIALIZE FOOTER
 // =====================================
 
-document.addEventListener("DOMContentLoaded", loadFooter);
+document.addEventListener(
+
+"DOMContentLoaded",
+
+function(){
+
+loadFooter();
+
+}
+
+);
