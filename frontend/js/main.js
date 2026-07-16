@@ -121,8 +121,8 @@ function renderChrome() {
           <button type="submit" aria-label="Search">${ICONS.search}</button>
         </form>
         <nav class="header-actions">
-          <a href="#">${ICONS.user} Login</a>
-          <a href="#">${ICONS.heart} Wishlist</a>
+          <a href="login.html">${ICONS.user} Login</a>
+          <a href="wishlist.html">${ICONS.heart} Wishlist</a>
           <a href="cart.html">${ICONS.cart} Cart <span class="cart-count" id="cartCount">0</span></a>
         </nav>
       </div>
