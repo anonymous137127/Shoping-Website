@@ -1,11 +1,17 @@
 from flask import Blueprint, jsonify
 from bson import ObjectId
 
-from database import users_collection
-from database import products_collection
-from database import orders_collection
+from database import (
+    users_collection,
+    products_collection,
+    orders_collection
+)
 
-admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
+admin_bp = Blueprint(
+    "admin",
+    __name__,
+    url_prefix="/api/admin"
+)
 
 
 # =====================================
@@ -23,7 +29,7 @@ def dashboard():
 
     for order in orders_collection.find():
 
-        revenue += order.get("total", 0)
+        revenue += float(order.get("total", 0))
 
     return jsonify({
 
@@ -32,8 +38,11 @@ def dashboard():
         "dashboard": {
 
             "users": total_users,
+
             "products": total_products,
+
             "orders": total_orders,
+
             "revenue": revenue
 
         }
@@ -61,7 +70,9 @@ def get_users():
     return jsonify({
 
         "success": True,
+
         "count": len(users),
+
         "users": users
 
     })
@@ -74,6 +85,16 @@ def get_users():
 @admin_bp.route("/users/delete/<user_id>", methods=["DELETE"])
 def delete_user(user_id):
 
+    if not ObjectId.is_valid(user_id):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Invalid User ID"
+
+        }), 400
+
     users_collection.delete_one({
 
         "_id": ObjectId(user_id)
@@ -83,6 +104,7 @@ def delete_user(user_id):
     return jsonify({
 
         "success": True,
+
         "message": "User Deleted"
 
     })
@@ -106,7 +128,9 @@ def get_products():
     return jsonify({
 
         "success": True,
+
         "count": len(products),
+
         "products": products
 
     })
@@ -119,6 +143,16 @@ def get_products():
 @admin_bp.route("/products/delete/<product_id>", methods=["DELETE"])
 def delete_product(product_id):
 
+    if not ObjectId.is_valid(product_id):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Invalid Product ID"
+
+        }), 400
+
     products_collection.delete_one({
 
         "_id": ObjectId(product_id)
@@ -128,6 +162,7 @@ def delete_product(product_id):
     return jsonify({
 
         "success": True,
+
         "message": "Product Deleted"
 
     })
@@ -151,7 +186,9 @@ def get_orders():
     return jsonify({
 
         "success": True,
+
         "count": len(orders),
+
         "orders": orders
 
     })
@@ -164,6 +201,16 @@ def get_orders():
 @admin_bp.route("/orders/delete/<order_id>", methods=["DELETE"])
 def delete_order(order_id):
 
+    if not ObjectId.is_valid(order_id):
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Invalid Order ID"
+
+        }), 400
+
     orders_collection.delete_one({
 
         "_id": ObjectId(order_id)
@@ -173,6 +220,7 @@ def delete_order(order_id):
     return jsonify({
 
         "success": True,
+
         "message": "Order Deleted"
 
     })

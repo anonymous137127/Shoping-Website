@@ -1,13 +1,19 @@
 from flask import Blueprint, request, jsonify
 from bson import ObjectId
 
-from database import wishlist_collection
-from database import products_collection
-from database import cart_collection
+from database import (
+    wishlist_collection,
+    products_collection,
+    cart_collection
+)
 
-from routes.auth import token_required
+from middleware.jwt import token_required
 
-wishlist_bp = Blueprint("wishlist", __name__, url_prefix="/api/wishlist")
+wishlist_bp = Blueprint(
+    "wishlist",
+    __name__,
+    url_prefix="/api/wishlist"
+)
 
 
 # =====================================
@@ -25,6 +31,9 @@ def get_wishlist(current_user):
     })
 
     for item in items:
+
+        if not ObjectId.is_valid(item["product_id"]):
+            continue
 
         product = products_collection.find_one({
             "_id": ObjectId(item["product_id"])
@@ -58,9 +67,18 @@ def get_wishlist(current_user):
 @token_required
 def add_to_wishlist(current_user):
 
-    data = request.json
+    data = request.get_json()
 
     product_id = data.get("product_id")
+
+    if not ObjectId.is_valid(product_id):
+
+        return jsonify({
+
+            "success": False,
+            "message": "Invalid Product ID"
+
+        }), 400
 
     existing = wishlist_collection.find_one({
 
@@ -90,7 +108,7 @@ def add_to_wishlist(current_user):
         "success": True,
         "message": "Added to Wishlist"
 
-    })
+    }), 201
 
 
 # =====================================
@@ -100,6 +118,15 @@ def add_to_wishlist(current_user):
 @wishlist_bp.route("/remove/<wishlist_id>", methods=["DELETE"])
 @token_required
 def remove_from_wishlist(current_user, wishlist_id):
+
+    if not ObjectId.is_valid(wishlist_id):
+
+        return jsonify({
+
+            "success": False,
+            "message": "Invalid Wishlist ID"
+
+        }), 400
 
     wishlist_collection.delete_one({
 
@@ -123,6 +150,15 @@ def remove_from_wishlist(current_user, wishlist_id):
 @wishlist_bp.route("/move-to-cart/<wishlist_id>", methods=["POST"])
 @token_required
 def move_to_cart(current_user, wishlist_id):
+
+    if not ObjectId.is_valid(wishlist_id):
+
+        return jsonify({
+
+            "success": False,
+            "message": "Invalid Wishlist ID"
+
+        }), 400
 
     item = wishlist_collection.find_one({
 

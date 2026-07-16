@@ -1,12 +1,12 @@
-import jwt
 import os
+import jwt
+
 from functools import wraps
 from flask import request, jsonify
 
 from database import users_collection
 
-
-JWT_SECRET = os.getenv("JWT_SECRET")
+JWT_SECRET = os.getenv("JWT_SECRET", "")
 
 
 def token_required(f):
@@ -25,7 +25,16 @@ def token_required(f):
 
         try:
 
-            token = auth_header.split(" ")[1]
+            parts = auth_header.split()
+
+            if len(parts) != 2 or parts[0] != "Bearer":
+
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid Authorization Header"
+                }), 401
+
+            token = parts[1]
 
             payload = jwt.decode(
                 token,
@@ -33,31 +42,38 @@ def token_required(f):
                 algorithms=["HS256"]
             )
 
-            user = users_collection.find_one({
+            current_user = users_collection.find_one({
                 "email": payload["email"]
             })
 
-            if not user:
+            if current_user is None:
 
                 return jsonify({
                     "success": False,
                     "message": "User not found"
                 }), 404
 
+            return f(current_user, *args, **kwargs)
+
         except jwt.ExpiredSignatureError:
 
             return jsonify({
                 "success": False,
-                "message": "Token Expired"
+                "message": "Token has expired"
             }), 401
 
         except jwt.InvalidTokenError:
 
             return jsonify({
                 "success": False,
-                "message": "Invalid Token"
+                "message": "Invalid token"
             }), 401
 
-        return f(user, *args, **kwargs)
+        except Exception as e:
+
+            return jsonify({
+                "success": False,
+                "message": str(e)
+            }), 500
 
     return decorated

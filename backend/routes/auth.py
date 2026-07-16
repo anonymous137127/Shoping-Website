@@ -1,71 +1,24 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import users_collection
+from middleware.jwt import token_required
 import jwt
 import datetime
 import os
-from functools import wraps
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 
-# ===========================
-# JWT Token Required Decorator
-# ===========================
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-
-        token = request.headers.get("Authorization")
-
-        if not token:
-            return jsonify({
-                "success": False,
-                "message": "Token is missing"
-            }), 401
-
-        try:
-            token = token.split(" ")[1]
-
-            data = jwt.decode(
-                token,
-                JWT_SECRET,
-                algorithms=["HS256"]
-            )
-
-            current_user = users_collection.find_one(
-                {"email": data["email"]}
-            )
-
-            if not current_user:
-                return jsonify({
-                    "success": False,
-                    "message": "User not found"
-                }), 404
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "message": "Invalid Token",
-                "error": str(e)
-            }), 401
-
-        return f(current_user, *args, **kwargs)
-
-    return decorated
-
-
-# ===========================
-# Register
-# ===========================
+# =====================================
+# REGISTER
+# =====================================
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
 
-    data = request.json
+    data = request.get_json()
 
     fullname = data.get("fullname")
     email = data.get("email")
@@ -80,7 +33,7 @@ def register():
         }), 400
 
     existing = users_collection.find_one({
-        "email": email
+        "email": email.lower()
     })
 
     if existing:
@@ -95,11 +48,19 @@ def register():
     user = {
 
         "fullname": fullname,
-        "email": email,
+
+        "email": email.lower(),
+
         "phone": phone,
+
         "password": hashed_password,
+
         "profile": "",
+
         "role": "user",
+
+        "is_active": True,
+
         "created_at": datetime.datetime.utcnow()
 
     }
@@ -109,46 +70,65 @@ def register():
     return jsonify({
 
         "success": True,
+
         "message": "Registration Successful"
 
     }), 201
 
 
-# ===========================
-# Login
-# ===========================
+# =====================================
+# LOGIN
+# =====================================
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
 
-    data = request.json
+    data = request.get_json()
 
     email = data.get("email")
     password = data.get("password")
 
     user = users_collection.find_one({
-        "email": email
+
+        "email": email.lower()
+
     })
 
     if not user:
 
         return jsonify({
+
             "success": False,
-            "message": "Invalid Email"
+
+            "message": "Invalid Email or Password"
+
         }), 401
 
-    if not check_password_hash(user["password"], password):
+    if not check_password_hash(
+
+        user["password"],
+        password
+
+    ):
 
         return jsonify({
+
             "success": False,
-            "message": "Invalid Password"
+
+            "message": "Invalid Email or Password"
+
         }), 401
 
     token = jwt.encode(
 
         {
+
             "email": user["email"],
+
+            "role": user["role"],
+
             "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+
         },
 
         JWT_SECRET,
@@ -160,6 +140,7 @@ def login():
     return jsonify({
 
         "success": True,
+
         "message": "Login Successful",
 
         "token": token,
@@ -167,8 +148,13 @@ def login():
         "user": {
 
             "fullname": user["fullname"],
+
             "email": user["email"],
+
             "phone": user["phone"],
+
+            "profile": user.get("profile", ""),
+
             "role": user["role"]
 
         }
@@ -176,9 +162,9 @@ def login():
     })
 
 
-# ===========================
-# Logged In User
-# ===========================
+# =====================================
+# CURRENT USER
+# =====================================
 
 @auth_bp.route("/me", methods=["GET"])
 @token_required
@@ -191,10 +177,32 @@ def me(current_user):
         "user": {
 
             "fullname": current_user["fullname"],
+
             "email": current_user["email"],
+
             "phone": current_user["phone"],
+
+            "profile": current_user.get("profile", ""),
+
             "role": current_user["role"]
 
         }
+
+    })
+
+
+# =====================================
+# LOGOUT
+# =====================================
+
+@auth_bp.route("/logout", methods=["POST"])
+@token_required
+def logout(current_user):
+
+    return jsonify({
+
+        "success": True,
+
+        "message": "Logout Successful"
 
     })
