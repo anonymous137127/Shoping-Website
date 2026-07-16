@@ -108,6 +108,62 @@ header.site-header {
 }
 .logo .dot { color: var(--amber); }
 
+/* ---------- Actual navbar markup from navbar.js ---------- */
+header.navbar {
+  background: var(--navy);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.nav-links a {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  transition: color .15s ease;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--amber);
+}
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -14px;
+  height: 2px;
+  background: var(--amber);
+}
+.badge {
+  background: var(--amber);
+  color: var(--navy-deep);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .search-form {
   flex: 1;
   display: flex;
@@ -280,6 +336,18 @@ header.site-header {
   box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   transform: rotate(-4deg);
 }
+.hero-visual .ticket h2 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 26px;
+  color: var(--navy-deep);
+  margin: 4px 0 2px;
+}
+.hero-visual .ticket p {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--success);
+  margin: 0;
+}
 
 /* ---------- Section headings ---------- */
 .section { padding: 48px 0; }
@@ -299,6 +367,9 @@ header.site-header {
   gap: 16px;
 }
 .cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: var(--card);
   border-radius: var(--radius);
   padding: 22px 12px;
@@ -602,6 +673,7 @@ footer {
   .logo { font-size: 20px; }
   .header-row { gap: 14px; }
   .header-actions { gap: 12px; }
+  .nav-links { gap: 12px; }
   .header-actions a span:not(.cart-count) { display: none; } /* icon-only actions if labels are wrapped in a span */
   .hero { padding: 44px 0 52px; }
   .hero h1 { font-size: clamp(24px, 7vw, 30px); }
