@@ -50,45 +50,13 @@ Quick Links
 
 <ul class="footer-links">
 
-<li>
+<li><a href="index.html">Home</a></li>
 
-<a href="index.html">
+<li><a href="shop.html">Shop</a></li>
 
-Home
+<li><a href="search.html">Search</a></li>
 
-</a>
-
-</li>
-
-<li>
-
-<a href="shop.html">
-
-Shop
-
-</a>
-
-</li>
-
-<li>
-
-<a href="search.html">
-
-Search
-
-</a>
-
-</li>
-
-<li>
-
-<a href="cart.html">
-
-Cart
-
-</a>
-
-</li>
+<li><a href="cart.html">Cart</a></li>
 
 </ul>
 
@@ -104,45 +72,13 @@ Customer
 
 <ul class="footer-links">
 
-<li>
+<li><a href="orders.html">Orders</a></li>
 
-<a href="orders.html">
+<li><a href="wishlist.html">Wishlist</a></li>
 
-Orders
+<li><a href="profile.html">Profile</a></li>
 
-</a>
-
-</li>
-
-<li>
-
-<a href="wishlist.html">
-
-Wishlist
-
-</a>
-
-</li>
-
-<li>
-
-<a href="profile.html">
-
-Profile
-
-</a>
-
-</li>
-
-<li>
-
-<a href="login.html">
-
-Login
-
-</a>
-
-</li>
+<li><a href="login.html">Login</a></li>
 
 </ul>
 
@@ -156,23 +92,11 @@ Contact
 
 </h3>
 
-<p>
+<p>📧 support@market.com</p>
 
-📧 support@market.com
+<p>📞 +91 9876543210</p>
 
-</p>
-
-<p>
-
-📞 +91 9876543210
-
-</p>
-
-<p>
-
-📍 Bengaluru, India
-
-</p>
+<p>📍 Bengaluru, Karnataka, India</p>
 
 </div>
 
@@ -184,9 +108,7 @@ Contact
 
 <p>
 
-© ${year} Market.
-
-All Rights Reserved.
+© ${year} Market. All Rights Reserved.
 
 </p>
 
@@ -200,20 +122,8 @@ All Rights Reserved.
 
 }
 
-
-
 // =====================================
 // Initialize Footer
 // =====================================
 
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    function(){
-
-        loadFooter();
-
-    }
-
-);
+document.addEventListener("DOMContentLoaded", loadFooter);

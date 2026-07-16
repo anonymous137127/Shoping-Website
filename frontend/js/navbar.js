@@ -8,9 +8,21 @@ function loadNavbar() {
 
     if (!header) return;
 
-    const loggedIn = isLoggedIn();
+    const token = localStorage.getItem("token");
 
-    const user = getUser();
+    const loggedIn = token !== null;
+
+    let user = {};
+
+    try {
+
+        user = JSON.parse(localStorage.getItem("user")) || {};
+
+    } catch {
+
+        user = {};
+
+    }
 
     header.innerHTML = `
 
@@ -49,8 +61,7 @@ Wishlist
 </a>
 
 ${
-loggedIn
-?
+loggedIn ?
 
 `
 
@@ -58,7 +69,7 @@ loggedIn
 
 <a href="profile.html">
 
-${user.fullname}
+${user.fullname || "Profile"}
 
 </a>
 
@@ -98,27 +109,30 @@ Register
 
 `;
 
-    if (loggedIn) {
+    const logoutBtn = document.getElementById("logoutBtn");
 
-        const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
 
-        if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (e) {
 
-            logoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
 
-                e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
 
-                if (confirm("Do you want to logout?")) {
+            window.location.href = "login.html";
 
-                    logoutUser();
+        });
 
-                }
+    }
 
-            });
-
-        }
+    if (typeof updateCartCount === "function") {
 
         updateCartCount();
+
+    }
+
+    if (typeof updateWishlistCount === "function") {
 
         updateWishlistCount();
 
@@ -126,10 +140,8 @@ Register
 
 }
 
-
-
 // =====================================
-// Highlight Active Page
+// Active Menu
 // =====================================
 
 function activeNavbar() {
@@ -138,9 +150,7 @@ function activeNavbar() {
 
     document.querySelectorAll(".nav-links a").forEach(link => {
 
-        const href = link.getAttribute("href");
-
-        if (href === current) {
+        if (link.getAttribute("href") === current) {
 
             link.classList.add("active");
 
@@ -150,22 +160,10 @@ function activeNavbar() {
 
 }
 
+document.addEventListener("DOMContentLoaded", () => {
 
+    loadNavbar();
 
-// =====================================
-// Initialize Navbar
-// =====================================
+    activeNavbar();
 
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    function () {
-
-        loadNavbar();
-
-        activeNavbar();
-
-    }
-
-);
+});
