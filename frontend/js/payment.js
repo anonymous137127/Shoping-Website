@@ -5,27 +5,37 @@
 const UPI_ID = "BHARATPE2O0D0U6X3M52305@unitype";
 const MERCHANT_NAME = "Nandi Groups";
 
-// =====================================
-// LOAD PAYMENT
-// =====================================
-
 document.addEventListener("DOMContentLoaded", () => {
 
     loadPayment();
 
 });
 
-function loadPayment() {
+// =====================================
+// LOAD PAYMENT PAGE
+// =====================================
 
-    const delivery = JSON.parse(localStorage.getItem("delivery") || "{}");
+function loadPayment() {
 
     const cart = JSON.parse(localStorage.getItem("market_cart_v1") || "{}");
 
+    const ids = Object.keys(cart);
+
+    if (ids.length === 0) {
+
+        alert("Your cart is empty.");
+
+        window.location.href = "cart.html";
+
+        return;
+
+    }
+
     let total = 0;
 
-    let items = [];
+    let html = "";
 
-    Object.keys(cart).forEach(id => {
+    ids.forEach(id => {
 
         const product = getProductById(id);
 
@@ -33,30 +43,25 @@ function loadPayment() {
 
         const qty = cart[id];
 
-        total += product.price * qty;
+        const subtotal = product.price * qty;
 
-        items.push({
-            product_id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: qty
-        });
+        total += subtotal;
+
+        html += `
+        <div class="summary-item">
+            <span>${product.name} × ${qty}</span>
+            <span>₹${subtotal.toLocaleString("en-IN")}</span>
+        </div>
+        `;
 
     });
+
+    document.getElementById("orderSummary").innerHTML = html;
 
     document.getElementById("totalAmount").innerHTML =
         "₹" + total.toLocaleString("en-IN");
 
-    document.getElementById("upiId").innerHTML =
-        UPI_ID;
-
-    document.getElementById("orderSummary").innerHTML =
-        items.map(item => `
-            <div class="summary-item">
-                <span>${item.name} × ${item.quantity}</span>
-                <span>₹${(item.price * item.quantity).toLocaleString("en-IN")}</span>
-            </div>
-        `).join("");
+    document.getElementById("upiId").innerHTML = UPI_ID;
 
     generateQR(total);
 
@@ -65,20 +70,16 @@ function loadPayment() {
 }
 
 // =====================================
-// QR CODE
+// GENERATE QR
 // =====================================
 
 function generateQR(amount) {
 
-    const upi =
+    const upiLink =
+        `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amount}&cu=INR`;
 
-`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${amount}&cu=INR`;
-
-    const qr =
-
-`https://quickchart.io/qr?size=300&text=${encodeURIComponent(upi)}`;
-
-    document.getElementById("paymentQR").src = qr;
+    document.getElementById("paymentQR").src =
+        `https://quickchart.io/qr?size=300&text=${encodeURIComponent(upiLink)}`;
 
 }
 
@@ -92,13 +93,17 @@ function countdown() {
 
     const timer = document.getElementById("timer");
 
-    const interval = setInterval(() => {
+    timer.innerHTML = sec;
 
-        timer.innerHTML = sec;
+    const interval = setInterval(() => {
 
         sec--;
 
-        if (sec < 0) {
+        if (sec >= 0) {
+
+            timer.innerHTML = sec;
+
+        } else {
 
             clearInterval(interval);
 
@@ -106,7 +111,7 @@ function countdown() {
 
         }
 
-    },1000);
+    }, 1000);
 
 }
 
@@ -116,60 +121,103 @@ function countdown() {
 
 async function paymentCompleted() {
 
-    const delivery = JSON.parse(
-
-        localStorage.getItem("delivery")
-
-    );
-
     const token = localStorage.getItem("token");
 
-    const response = await fetch(
+    if (!token) {
 
-        API_URL + "/orders/place",
+        alert("Please login first.");
 
-        {
+        window.location.href = "login.html";
 
-            method:"POST",
+        return;
 
-            headers:{
+    }
 
-                "Content-Type":"application/json",
+    const delivery = JSON.parse(localStorage.getItem("delivery") || "{}");
 
-                Authorization:"Bearer " + token
+    if (!delivery.address) {
 
-            },
+        alert("Delivery address not found.");
 
-            body:JSON.stringify({
+        window.location.href = "checkout.html";
 
-                address:
+        return;
 
+    }
+
+    const btn = document.getElementById("paymentBtn");
+
+    if (btn) {
+
+        btn.disabled = true;
+
+        btn.innerHTML = "Processing...";
+
+    }
+
+    try {
+
+        const response = await fetch(
+
+            API_URL + "/orders/place",
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": "Bearer " + token
+
+                },
+
+                body: JSON.stringify({
+
+                    address:
 `${delivery.address},
 ${delivery.city},
 ${delivery.state},
 ${delivery.pincode}`,
 
-                payment_method:"UPI"
+                    payment_method: "UPI"
 
-            })
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            localStorage.removeItem("market_cart_v1");
+            localStorage.removeItem("delivery");
+
+            window.location.href =
+                "success.html?order=" + data.order_id;
+
+        } else {
+
+            alert(data.message || "Unable to place order.");
 
         }
 
-    );
+    } catch (err) {
 
-    const data = await response.json();
+        console.error(err);
 
-    if(data.success){
+        alert("Unable to connect to the server.");
 
-        localStorage.removeItem("market_cart_v1");
+    }
 
-        window.location.href=
+    if (btn) {
 
-"success.html?order="+data.order_id;
+        btn.disabled = false;
 
-    }else{
-
-        alert(data.message);
+        btn.innerHTML = "I Have Completed Payment";
 
     }
 

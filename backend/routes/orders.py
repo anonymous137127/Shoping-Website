@@ -16,7 +16,6 @@ orders_bp = Blueprint(
     url_prefix="/api/orders"
 )
 
-
 # =====================================
 # PLACE ORDER
 # =====================================
@@ -28,13 +27,13 @@ def place_order(current_user):
     data = request.get_json()
 
     address = data.get("address")
-    payment_method = data.get("payment_method")
+    payment_method = data.get("payment_method", "UPI")
 
     cart_items = list(cart_collection.find({
         "user_email": current_user["email"]
     }))
 
-    if not cart_items:
+    if len(cart_items) == 0:
         return jsonify({
             "success": False,
             "message": "Cart is empty"
@@ -52,7 +51,9 @@ def place_order(current_user):
         if not product:
             continue
 
-        subtotal = float(product["price"]) * int(item["quantity"])
+        quantity = int(item["quantity"])
+
+        subtotal = float(product["price"]) * quantity
 
         total_amount += subtotal
 
@@ -61,7 +62,7 @@ def place_order(current_user):
             "product_id": str(product["_id"]),
             "name": product["name"],
             "price": product["price"],
-            "quantity": item["quantity"],
+            "quantity": quantity,
             "subtotal": subtotal
 
         })
@@ -69,12 +70,21 @@ def place_order(current_user):
     order = {
 
         "user_email": current_user["email"],
+
         "fullname": current_user["fullname"],
+
         "address": address,
-        "payment_method": payment_method,
+
         "products": order_products,
+
+        "payment_method": payment_method,
+
+        "payment_status": "Pending",
+
         "total": total_amount,
+
         "status": "Pending",
+
         "ordered_at": datetime.utcnow()
 
     }
@@ -82,13 +92,17 @@ def place_order(current_user):
     result = orders_collection.insert_one(order)
 
     cart_collection.delete_many({
+
         "user_email": current_user["email"]
+
     })
 
     return jsonify({
 
         "success": True,
-        "message": "Order Placed Successfully",
+
+        "message": "Order placed successfully. Waiting for payment verification.",
+
         "order_id": str(result.inserted_id)
 
     }), 201
@@ -105,16 +119,21 @@ def my_orders(current_user):
     orders = []
 
     for order in orders_collection.find({
+
         "user_email": current_user["email"]
-    }):
+
+    }).sort("ordered_at", -1):
 
         order["_id"] = str(order["_id"])
+
         orders.append(order)
 
     return jsonify({
 
         "success": True,
+
         "count": len(orders),
+
         "orders": orders
 
     })
@@ -129,22 +148,31 @@ def my_orders(current_user):
 def single_order(current_user, order_id):
 
     if not ObjectId.is_valid(order_id):
+
         return jsonify({
+
             "success": False,
+
             "message": "Invalid Order ID"
+
         }), 400
 
     order = orders_collection.find_one({
 
         "_id": ObjectId(order_id),
+
         "user_email": current_user["email"]
 
     })
 
     if not order:
+
         return jsonify({
+
             "success": False,
+
             "message": "Order Not Found"
+
         }), 404
 
     order["_id"] = str(order["_id"])
@@ -152,6 +180,7 @@ def single_order(current_user, order_id):
     return jsonify({
 
         "success": True,
+
         "order": order
 
     })
@@ -166,41 +195,59 @@ def single_order(current_user, order_id):
 def cancel_order(current_user, order_id):
 
     if not ObjectId.is_valid(order_id):
+
         return jsonify({
+
             "success": False,
+
             "message": "Invalid Order ID"
+
         }), 400
 
     order = orders_collection.find_one({
 
         "_id": ObjectId(order_id),
+
         "user_email": current_user["email"]
 
     })
 
     if not order:
+
         return jsonify({
+
             "success": False,
+
             "message": "Order Not Found"
+
         }), 404
 
-    if order["status"] == "Delivered":
+    if order["status"] in ["Delivered", "Cancelled"]:
 
         return jsonify({
+
             "success": False,
-            "message": "Delivered order cannot be cancelled"
+
+            "message": "Order cannot be cancelled"
+
         }), 400
 
     orders_collection.update_one(
 
         {
+
             "_id": ObjectId(order_id)
+
         },
 
         {
+
             "$set": {
+
                 "status": "Cancelled"
+
             }
+
         }
 
     )
@@ -208,38 +255,47 @@ def cancel_order(current_user, order_id):
     return jsonify({
 
         "success": True,
+
         "message": "Order Cancelled"
 
     })
 
 
 # =====================================
-# UPDATE ORDER STATUS (ADMIN)
+# ADMIN UPDATE STATUS
 # =====================================
 
 @orders_bp.route("/status/<order_id>", methods=["PUT"])
 def update_status(order_id):
 
     if not ObjectId.is_valid(order_id):
+
         return jsonify({
+
             "success": False,
+
             "message": "Invalid Order ID"
+
         }), 400
 
     data = request.get_json()
 
-    status = data.get("status")
-
     orders_collection.update_one(
 
         {
+
             "_id": ObjectId(order_id)
+
         },
 
         {
+
             "$set": {
-                "status": status
+
+                "status": data.get("status")
+
             }
+
         }
 
     )
@@ -247,6 +303,7 @@ def update_status(order_id):
     return jsonify({
 
         "success": True,
+
         "message": "Order Status Updated"
 
     })
