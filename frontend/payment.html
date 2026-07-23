@@ -60,7 +60,7 @@ src=""
 
 alt="UPI QR Code"
 
-style="width:280px;height:280px;border:1px solid #ddd;border-radius:12px;">
+style="width:220px;height:220px;">
 
 <h3>
 
@@ -102,27 +102,27 @@ Supported UPI Apps
 
 <div class="upi-apps">
 
-<button class="btn btn-light">
+<button class="btn btn-light" data-app="phonepe" onclick="payVia('phonepe')">
 
-📱 PhonePe
-
-</button>
-
-<button class="btn btn-light">
-
-🟢 Google Pay
+PhonePe
 
 </button>
 
-<button class="btn btn-light">
+<button class="btn btn-light" data-app="gpay" onclick="payVia('gpay')">
 
-💙 Paytm
+Google Pay
 
 </button>
 
-<button class="btn btn-light">
+<button class="btn btn-light" data-app="paytm" onclick="payVia('paytm')">
 
-🏦 BHIM
+Paytm
+
+</button>
+
+<button class="btn btn-light" data-app="bhim" onclick="payVia('bhim')">
+
+BHIM
 
 </button>
 
@@ -132,19 +132,24 @@ Supported UPI Apps
 
 <div class="countdown-box">
 
-Checking Payment...
+<span class="status-dot"></span>
+<span class="status-text">Waiting for payment confirmation…</span>
 
-<br><br>
+<div class="timer-ring">
 
-<span
+<svg viewBox="0 0 100 100">
 
-id="timer"
+<circle class="timer-track" cx="50" cy="50" r="45"></circle>
 
-style="font-size:35px;font-weight:bold;color:#1E88E5;">
+<circle id="timerRing" class="timer-progress" cx="50" cy="50" r="45"></circle>
 
-5
+</svg>
 
-</span>
+<span id="timer">5:00</span>
+
+</div>
+
+<span class="status-sub">This page will update automatically once payment is received.</span>
 
 </div>
 
@@ -185,6 +190,112 @@ I Have Completed Payment
 <script src="js/footer.js"></script>
 <script src="js/payment.js"></script>
 <script src="js/main.js"></script>
+
+<script>
+
+// =====================================
+// 5-MINUTE COUNTDOWN
+// =====================================
+
+(function () {
+
+  const TOTAL_SECONDS = 5 * 60; // 5 minutes
+  let secondsLeft = TOTAL_SECONDS;
+
+  const timerEl = document.getElementById("timer");
+  const ringEl = document.getElementById("timerRing");
+  const circumference = 2 * Math.PI * 45;
+
+  if (ringEl) {
+    ringEl.style.strokeDasharray = circumference;
+    ringEl.style.strokeDashoffset = 0;
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  }
+
+  function tick() {
+
+    if (secondsLeft <= 0) {
+      clearInterval(interval);
+      if (timerEl) timerEl.textContent = "0:00";
+      const statusText = document.querySelector(".status-text");
+      const statusSub = document.querySelector(".status-sub");
+      if (statusText) statusText.textContent = "Payment session expired";
+      if (statusSub) statusSub.textContent = "Please retry payment to continue.";
+      const box = document.querySelector(".countdown-box");
+      if (box) box.classList.add("expired");
+      return;
+    }
+
+    secondsLeft--;
+
+    if (timerEl) timerEl.textContent = formatTime(secondsLeft);
+
+    if (ringEl) {
+      const progress = secondsLeft / TOTAL_SECONDS;
+      ringEl.style.strokeDashoffset = circumference * (1 - progress);
+    }
+
+    // Urgency state in the final 30 seconds
+    const box = document.querySelector(".countdown-box");
+    if (box && secondsLeft <= 30) {
+      box.classList.add("urgent");
+    }
+
+  }
+
+  const interval = setInterval(tick, 1000);
+
+})();
+
+// =====================================
+// UPI APP DEEP LINKS
+// =====================================
+
+function payVia(app) {
+
+  const upiId = document.getElementById("upiId")?.textContent?.trim() || "";
+  const amountText = document.getElementById("totalAmount")?.textContent || "0";
+  const amount = amountText.replace(/[^0-9.]/g, "") || "0";
+  const payeeName = "Market";
+  const note = "Order Payment";
+
+  if (!upiId) {
+    alert("Payment details are still loading. Please wait a moment and try again.");
+    return;
+  }
+
+  const baseParams = `pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+  // App-specific UPI deep link schemes
+  const schemes = {
+    phonepe: `phonepe://pay?${baseParams}`,
+    gpay: `tez://upi/pay?${baseParams}`,
+    paytm: `paytmmp://pay?${baseParams}`,
+    bhim: `bhim://pay?${baseParams}`
+  };
+
+  // Generic UPI intent as a fallback (works with any UPI app on most Android/iOS devices)
+  const genericUpiLink = `upi://pay?${baseParams}`;
+
+  const targetLink = schemes[app] || genericUpiLink;
+
+  // Attempt app-specific redirect; fall back to generic UPI link if it fails to open
+  const fallbackTimer = setTimeout(() => {
+    window.location.href = genericUpiLink;
+  }, 1200);
+
+  window.addEventListener("blur", () => clearTimeout(fallbackTimer), { once: true });
+
+  window.location.href = targetLink;
+
+}
+
+</script>
 
 </body>
 

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/profile.css">
 <link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/orders.css">
 
 </head>
 
@@ -26,11 +27,17 @@
 
 <div class="container">
 
-<h1>My Orders</h1>
+<h1 class="orders-title">My Orders</h1>
 
 <div id="ordersContainer">
 
-Loading Orders...
+<div class="orders-loading">
+
+<span class="loader-spinner"></span>
+
+Loading your orders...
+
+</div>
 
 </div>
 
@@ -55,6 +62,22 @@ window.location="login.html";
 }
 
 loadOrders();
+
+function statusClass(status){
+
+const s=(status||"").toLowerCase();
+
+if(s==="pending") return "status-pending";
+
+if(s==="delivered") return "status-delivered";
+
+if(s==="cancelled") return "status-cancelled";
+
+if(s==="shipped" || s==="processing") return "status-processing";
+
+return "status-default";
+
+}
 
 async function loadOrders(){
 
@@ -106,35 +129,39 @@ return;
 
 let html="";
 
-data.orders.forEach(order=>{
+data.orders.forEach((order,index)=>{
 
 html+=`
 
-<div class="profile-card" style="margin-bottom:25px;">
+<div class="order-card" style="animation-delay:${index * 0.07}s">
 
-<h3>
+<div class="order-card-top">
 
-Order ID
+<div>
 
-</h3>
+<h3 class="order-id-label">Order ID</h3>
 
-<p>${order._id}</p>
+<p class="order-id-value">${order._id}</p>
 
-<hr>
+</div>
 
-<p>
-
-<strong>Status :</strong>
+<span class="status-badge ${statusClass(order.status)}">
 
 ${order.status}
 
-</p>
+</span>
+
+</div>
+
+<hr>
+
+<div class="order-meta-grid">
 
 <p>
 
 <strong>Total :</strong>
 
-₹${order.total}
+<span>₹${order.total}</span>
 
 </p>
 
@@ -142,15 +169,7 @@ ${order.status}
 
 <strong>Payment :</strong>
 
-${order.payment_method}
-
-</p>
-
-<p>
-
-<strong>Address :</strong>
-
-${order.address}
+<span>${order.payment_method}</span>
 
 </p>
 
@@ -158,31 +177,37 @@ ${order.address}
 
 <strong>Date :</strong>
 
-${new Date(order.ordered_at).toLocaleString()}
+<span>${new Date(order.ordered_at).toLocaleString()}</span>
 
 </p>
 
-<h4>
+<p class="order-address">
+
+<strong>Address :</strong>
+
+<span>${order.address}</span>
+
+</p>
+
+</div>
+
+<h4 class="order-products-heading">
 
 Products
 
 </h4>
 
-<ul>
+<ul class="order-products-list">
 
 ${order.products.map(product=>`
 
 <li>
 
-${product.name}
+<span class="op-name">${product.name}</span>
 
-×
+<span class="op-qty">× ${product.quantity}</span>
 
-${product.quantity}
-
--
-
-₹${product.subtotal}
+<span class="op-price">₹${product.subtotal}</span>
 
 </li>
 
@@ -199,7 +224,7 @@ order.status==="Pending"
 
 <button
 
-class="btn btn-danger"
+class="btn btn-danger order-cancel-btn"
 
 onclick="cancelOrder('${order._id}')">
 

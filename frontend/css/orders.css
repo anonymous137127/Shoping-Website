@@ -1,0 +1,275 @@
+/* =========================================================
+   orders.css — My Orders page
+   Layers on top of style.css / profile.css / responsive.css / animations.css
+   ========================================================= */
+
+@keyframes orderCardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232,163,61,0.28); }
+  50%      { box-shadow: 0 0 0 6px rgba(232,163,61,0); }
+}
+@keyframes barSweep {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.orders-title {
+  font-size: 26px;
+  margin-bottom: 24px;
+  animation: orderCardIn .4s ease both;
+}
+
+/* ---------- Loading state ---------- */
+.orders-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+.loader-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--line);
+  border-top-color: var(--navy);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+/* ---------- Order card ---------- */
+.order-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 26px 28px 22px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+  animation: orderCardIn .45s cubic-bezier(.16,.84,.44,1) both;
+  transition: box-shadow .25s ease, transform .2s ease;
+}
+.order-card:hover {
+  box-shadow: var(--shadow), 0 12px 28px rgba(20,33,61,0.08);
+  transform: translateY(-2px);
+}
+.order-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--amber) 100%);
+  background-size: 200% 100%;
+  animation: barSweep 5s linear infinite;
+}
+
+.order-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.order-id-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 0 0 4px;
+}
+.order-id-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy-deep);
+  background: #EEF1F8;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  word-break: break-all;
+  margin: 0;
+}
+
+/* ---------- Status badge ---------- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.status-pending {
+  background: #FCF3E3;
+  color: #A5670F;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+.status-processing {
+  background: #E8F1FC;
+  color: #1E5FA6;
+}
+.status-delivered {
+  background: #E8F7EE;
+  color: #1E9E5A;
+}
+.status-cancelled {
+  background: #FCEEEE;
+  color: #C0392B;
+}
+.status-default {
+  background: #F1F2F5;
+  color: var(--text-muted);
+}
+
+.order-card hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
+/* ---------- Meta grid (total / payment / date / address) ---------- */
+.order-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+  margin-bottom: 18px;
+}
+.order-meta-grid p {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text);
+  margin: 0;
+}
+.order-meta-grid p strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.order-address {
+  grid-column: 1 / -1;
+}
+.order-address span {
+  text-align: right;
+}
+
+/* ---------- Products list ---------- */
+.order-products-heading {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+.order-products-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.order-products-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 10px;
+  font-size: 13.5px;
+  border-radius: 8px;
+  transition: background-color .15s ease;
+}
+.order-products-list li:hover {
+  background: #FAFBFD;
+}
+.op-name {
+  flex: 1;
+  color: var(--text);
+  font-weight: 500;
+}
+.op-qty {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  flex-shrink: 0;
+}
+.op-price {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  color: var(--navy-deep);
+  flex-shrink: 0;
+  min-width: 70px;
+  text-align: right;
+}
+
+/* ---------- Cancel button ---------- */
+.order-cancel-btn {
+  margin-top: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .2s ease, background-color .15s ease;
+}
+.order-cancel-btn::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left .5s ease;
+}
+.order-cancel-btn:hover::after { left: 130%; }
+.order-cancel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(224,49,49,0.24);
+}
+.order-cancel-btn:active {
+  transform: translateY(1px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .order-card {
+    padding: 20px 18px 18px;
+  }
+  .order-meta-grid {
+    grid-template-columns: 1fr;
+  }
+  .order-address span,
+  .order-meta-grid p span {
+    text-align: right;
+  }
+  .order-card-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .order-products-list li {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-card,
+  .orders-title,
+  .status-pending,
+  .loader-spinner,
+  .order-card::before,
+  .order-cancel-btn::after {
+    animation: none !important;
+  }
+}

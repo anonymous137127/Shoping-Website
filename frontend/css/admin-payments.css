@@ -1,0 +1,319 @@
+/* =========================================================
+   admin-payments.css — Admin Payment Management
+   Terminal / hacker aesthetic: matrix green, monospace, scanlines.
+   ========================================================= */
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92%      { opacity: 1; }
+  93%      { opacity: 0.85; }
+  94%      { opacity: 1; }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(57,255,140,0.25), inset 0 0 20px rgba(57,255,140,0.03); }
+  50%      { box-shadow: 0 0 14px rgba(57,255,140,0.45), inset 0 0 20px rgba(57,255,140,0.06); }
+}
+@keyframes cursorBlink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes dotFade {
+  0%, 20%  { opacity: 0; }
+  50%      { opacity: 1; }
+  100%     { opacity: 0; }
+}
+@keyframes badgePulseGreen {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,183,3,0.35); }
+  50%      { box-shadow: 0 0 0 5px rgba(255,183,3,0); }
+}
+
+/* ---------- Terminal shell ---------- */
+body.admin-terminal {
+  background: #050a06;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(57,255,140,0.05), transparent 55%);
+}
+body.admin-terminal main.section {
+  position: relative;
+}
+
+/* CRT scanline overlay */
+body.admin-terminal::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: linear-gradient(rgba(57,255,140,0.03) 50%, transparent 50%);
+  background-size: 100% 4px;
+  mix-blend-mode: overlay;
+}
+body.admin-terminal::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(57,255,140,0.5), transparent);
+  animation: scanline 6s linear infinite;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.admin-header h1,
+.admin-header p,
+.table-wrap {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+.admin-header {
+  margin-bottom: 26px;
+  animation: flicker 4s ease-in-out infinite;
+}
+
+.admin-header h1 {
+  color: #39FF8C;
+  font-size: 24px;
+  text-shadow: 0 0 8px rgba(57,255,140,0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.terminal-prompt {
+  color: #7CFFB2;
+  font-size: 15px;
+  opacity: 0.85;
+}
+.terminal-prompt::after {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 16px;
+  background: #39FF8C;
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: cursorBlink 1s step-end infinite;
+}
+
+.admin-header p {
+  color: #5FBE8A;
+  font-size: 13.5px;
+  margin-top: 6px;
+}
+
+/* ---------- Table shell ---------- */
+.table-wrap {
+  background: #0A140D;
+  border: 1px solid #1F4A31;
+  border-radius: 10px;
+  overflow-x: auto;
+  animation: glowPulse 3.5s ease-in-out infinite;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #C8FFDD;
+  font-size: 13px;
+  min-width: 720px;
+}
+
+.admin-table thead th {
+  background: #0F1F14;
+  color: #39FF8C;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #1F4A31;
+  position: sticky;
+  top: 0;
+}
+
+.admin-table tbody tr {
+  border-bottom: 1px solid #142A1B;
+  animation: rowIn .3s ease both;
+  transition: background-color .15s ease;
+}
+.admin-table tbody tr:hover {
+  background: rgba(57,255,140,0.05);
+}
+.admin-table tbody tr:nth-child(1) { animation-delay: .03s; }
+.admin-table tbody tr:nth-child(2) { animation-delay: .06s; }
+.admin-table tbody tr:nth-child(3) { animation-delay: .09s; }
+.admin-table tbody tr:nth-child(4) { animation-delay: .12s; }
+.admin-table tbody tr:nth-child(5) { animation-delay: .15s; }
+.admin-table tbody tr:nth-child(n+6) { animation-delay: .18s; }
+
+.admin-table td {
+  padding: 13px 16px;
+  vertical-align: middle;
+}
+
+.cell-id {
+  color: #7CFFB2;
+  font-weight: 600;
+  word-break: break-all;
+}
+.cell-amount {
+  color: #FFB703;
+  font-weight: 700;
+}
+
+/* ---------- Loading row ---------- */
+.loading-row {
+  text-align: center;
+  padding: 30px 0 !important;
+  color: #5FBE8A;
+}
+.loader-dots span {
+  display: inline-block;
+  animation: dotFade 1.4s infinite;
+}
+.loader-dots span:nth-child(2) { animation-delay: .2s; }
+.loader-dots span:nth-child(3) { animation-delay: .4s; }
+
+/* ---------- Status badges ---------- */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border: 1px solid transparent;
+}
+.badge-pending {
+  background: rgba(255,183,3,0.1);
+  color: #FFB703;
+  border-color: rgba(255,183,3,0.4);
+  animation: badgePulseGreen 2s ease-in-out infinite;
+}
+.badge-approved {
+  background: rgba(57,255,140,0.1);
+  color: #39FF8C;
+  border-color: rgba(57,255,140,0.4);
+}
+.badge-rejected {
+  background: rgba(255,69,58,0.1);
+  color: #FF453A;
+  border-color: rgba(255,69,58,0.4);
+}
+.badge-shipped {
+  background: rgba(94,180,255,0.1);
+  color: #5EB4FF;
+  border-color: rgba(94,180,255,0.4);
+}
+.badge-delivered {
+  background: rgba(57,255,140,0.15);
+  color: #39FF8C;
+  border-color: rgba(57,255,140,0.5);
+}
+.badge-default {
+  background: rgba(200,255,221,0.06);
+  color: #7CFFB2;
+  border-color: rgba(124,255,178,0.25);
+}
+
+/* ---------- Action buttons ---------- */
+.cell-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.btn-term {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 11px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform .12s ease, box-shadow .2s ease, background-color .15s ease, border-color .15s ease;
+}
+.btn-term::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-20deg);
+  transition: left .5s ease;
+}
+.btn-term:hover::after { left: 130%; }
+.btn-term:active { transform: translateY(1px) scale(0.97); }
+
+.btn-success.btn-term {
+  color: #39FF8C;
+  border-color: rgba(57,255,140,0.4);
+  background: rgba(57,255,140,0.06);
+}
+.btn-success.btn-term:hover {
+  background: rgba(57,255,140,0.15);
+  box-shadow: 0 0 12px rgba(57,255,140,0.35);
+}
+
+.btn-danger.btn-term {
+  color: #FF453A;
+  border-color: rgba(255,69,58,0.4);
+  background: rgba(255,69,58,0.06);
+}
+.btn-danger.btn-term:hover {
+  background: rgba(255,69,58,0.15);
+  box-shadow: 0 0 12px rgba(255,69,58,0.35);
+}
+
+.btn-term-neutral {
+  color: #5EB4FF;
+  border-color: rgba(94,180,255,0.4);
+  background: rgba(94,180,255,0.06);
+}
+.btn-term-neutral:hover {
+  background: rgba(94,180,255,0.15);
+  box-shadow: 0 0 12px rgba(94,180,255,0.35);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .admin-header h1 {
+    font-size: 19px;
+  }
+  .cell-actions {
+    flex-direction: column;
+  }
+  .btn-term {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.admin-terminal::before,
+  body.admin-terminal::after,
+  .admin-header,
+  .table-wrap,
+  .admin-table tbody tr,
+  .loader-dots span,
+  .badge-pending,
+  .btn-term::after {
+    animation: none !important;
+  }
+}

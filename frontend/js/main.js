@@ -1,4 +1,17 @@
 // =====================================
+// IMAGE PATH HELPER
+// =====================================
+
+const IMAGE_BASE_PATH = "image/"; // change to "frontend/image/" if your images sit one level up
+const IMAGE_EXT = ".jpg";         // change to .png / .webp to match your actual files
+
+function getProductImageSrc(product) {
+
+    return `${IMAGE_BASE_PATH}${product.img}${IMAGE_EXT}`;
+
+}
+
+// =====================================
 // CART
 // =====================================
 
@@ -180,7 +193,13 @@ function productCardHTML(product) {
 
 ${product.tag ? `<span class="product-badge">${product.tag}</span>` : ""}
 
-${productIcon(product.img)}
+<img
+  src="${getProductImageSrc(product)}"
+  alt="${product.name}"
+  loading="lazy"
+  onerror="this.onerror=null;this.src='${IMAGE_BASE_PATH}placeholder.jpg';"
+  style="width:100%;height:100%;object-fit:cover;"
+/>
 
 </div>
 

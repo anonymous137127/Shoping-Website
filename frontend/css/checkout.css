@@ -1,25 +1,42 @@
 /* =========================================================
    checkout.css — Checkout page
-   Matches the actual markup: .container > h1, p, #checkoutForm
-   (no wrapper div, so the form itself becomes the card).
+   Matches markup: .container > .checkout-container > h1, p, #checkoutForm
    ========================================================= */
 
 @keyframes checkoutIn {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(18px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fieldIn {
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes barSweep {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(20,33,61,0.08); }
+  50%      { box-shadow: 0 0 0 5px rgba(20,33,61,0.12); }
 }
 
 .container h1 {
   font-size: 26px;
   text-align: center;
   margin-bottom: 6px;
+  animation: fieldIn .45s ease both;
 }
 
+.container > .checkout-container > p,
 .container > p {
   text-align: center;
   color: var(--text-muted);
   font-size: 14.5px;
   margin: 0 0 28px;
+  animation: fieldIn .45s ease .05s both;
 }
 
 /* ---------- The form is the card ---------- */
@@ -33,20 +50,33 @@
   padding: 40px 42px 36px;
   position: relative;
   overflow: hidden;
-  animation: checkoutIn .4s ease both;
+  animation: checkoutIn .5s cubic-bezier(.16,.84,.44,1) both;
+  transition: box-shadow .3s ease;
+}
+#checkoutForm:hover {
+  box-shadow: var(--shadow), 0 12px 32px rgba(20,33,61,0.08);
 }
 #checkoutForm::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--amber) 100%);
+  background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 40%, var(--amber) 70%, var(--blue) 100%);
+  background-size: 200% 100%;
+  animation: barSweep 4s linear infinite;
 }
 
-/* ---------- Fields ---------- */
+/* ---------- Fields (staggered entrance) ---------- */
 #checkoutForm .form-group {
   margin-bottom: 20px;
+  animation: fieldIn .45s ease both;
 }
+#checkoutForm .form-group:nth-of-type(1) { animation-delay: .08s; }
+#checkoutForm .form-group:nth-of-type(2) { animation-delay: .13s; }
+#checkoutForm .form-group:nth-of-type(3) { animation-delay: .18s; }
+#checkoutForm .form-row               { animation-delay: .23s; }
+#checkoutForm .form-group:last-of-type { animation-delay: .28s; }
+
 #checkoutForm label {
   display: block;
   font-size: 13px;
@@ -54,6 +84,7 @@
   margin-bottom: 6px;
   color: var(--text);
   letter-spacing: 0.2px;
+  transition: color .15s ease;
 }
 #checkoutForm input,
 #checkoutForm textarea {
@@ -66,7 +97,7 @@
   border: 1.5px solid var(--line);
   border-radius: 8px;
   outline: none;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, background-color .18s ease;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .16s ease, background-color .18s ease;
 }
 #checkoutForm textarea {
   resize: vertical;
@@ -76,6 +107,7 @@
 #checkoutForm input::placeholder,
 #checkoutForm textarea::placeholder {
   color: #A6ADBB;
+  transition: opacity .15s ease;
 }
 #checkoutForm input:hover,
 #checkoutForm textarea:hover {
@@ -85,37 +117,63 @@
 #checkoutForm textarea:focus {
   border-color: var(--navy);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(20,33,61,0.08);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  animation: pulseGlow 1.6s ease-in-out infinite;
+}
+#checkoutForm input:focus + label,
+#checkoutForm input:focus ~ label {
+  color: var(--navy);
 }
 #checkoutForm input:invalid:not(:placeholder-shown),
 #checkoutForm textarea:invalid:not(:placeholder-shown) {
   border-color: var(--danger);
+  animation: none;
 }
 
-/* City / State / Pincode sit naturally in a row on wider screens */
-#checkoutForm .form-group:has(#city),
-#checkoutForm .form-group:has(#state),
-#checkoutForm .form-group:has(#pincode) {
-  display: inline-block;
-  width: calc(33.333% - 11px);
-  vertical-align: top;
+/* ---------- City / State row ---------- */
+#checkoutForm .form-row {
+  display: flex;
+  gap: 16px;
 }
-#checkoutForm .form-group:has(#city) { margin-right: 16px; }
-#checkoutForm .form-group:has(#state) { margin-right: 16px; }
+#checkoutForm .form-row .form-group {
+  flex: 1;
+  margin-bottom: 20px;
+}
 
 /* ---------- Submit ---------- */
 #checkoutForm .btn-block {
   margin-top: 8px;
   padding: 14px;
   font-size: 15px;
-  transition: background-color .18s ease, transform .12s ease, box-shadow .18s ease;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color .18s ease, transform .12s ease, box-shadow .25s ease;
+  animation: fieldIn .45s ease .33s both;
+}
+#checkoutForm .btn-block::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left .5s ease;
 }
 #checkoutForm .btn-block:hover {
-  box-shadow: 0 8px 20px rgba(232,163,61,0.28);
+  box-shadow: 0 10px 24px rgba(232,163,61,0.32);
+  transform: translateY(-2px);
+}
+#checkoutForm .btn-block:hover::after {
+  left: 130%;
 }
 #checkoutForm .btn-block:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 4px 12px rgba(232,163,61,0.24);
 }
 
 /* ---------- Responsive ---------- */
@@ -123,12 +181,9 @@
   #checkoutForm {
     padding: 30px 26px 26px;
   }
-  #checkoutForm .form-group:has(#city),
-  #checkoutForm .form-group:has(#state),
-  #checkoutForm .form-group:has(#pincode) {
-    display: block;
-    width: 100%;
-    margin-right: 0;
+  #checkoutForm .form-row {
+    flex-direction: column;
+    gap: 0;
   }
 }
 @media (max-width: 480px) {
@@ -137,5 +192,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #checkoutForm { animation: none !important; }
+  #checkoutForm,
+  #checkoutForm .form-group,
+  #checkoutForm .btn-block,
+  .container h1,
+  .container > p {
+    animation: none !important;
+  }
+  #checkoutForm::before {
+    animation: none !important;
+  }
+  #checkoutForm input:focus,
+  #checkoutForm textarea:focus {
+    animation: none !important;
+  }
 }

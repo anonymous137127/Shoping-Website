@@ -11,10 +11,11 @@ content="width=device-width, initial-scale=1.0">
 <title>Admin Payments - Market</title>
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin-payments.css">
 
 </head>
 
-<body>
+<body class="admin-terminal">
 
 <div id="headerMount"></div>
 
@@ -22,9 +23,11 @@ content="width=device-width, initial-scale=1.0">
 
 <div class="container">
 
+<div class="admin-header">
+
 <h1>
 
-Payment Management
+<span class="terminal-prompt">root@market:~$</span> Payment Management
 
 </h1>
 
@@ -34,7 +37,11 @@ Approve or Reject Customer Payments
 
 </p>
 
-<table class="table">
+</div>
+
+<div class="table-wrap">
+
+<table class="table admin-table">
 
 <thead>
 
@@ -60,9 +67,9 @@ Approve or Reject Customer Payments
 
 <tr>
 
-<td colspan="6">
+<td colspan="6" class="loading-row">
 
-Loading...
+<span class="loader-dots">Loading payments<span>.</span><span>.</span><span>.</span></span>
 
 </td>
 
@@ -71,6 +78,8 @@ Loading...
 </tbody>
 
 </table>
+
+</div>
 
 </div>
 
@@ -92,6 +101,24 @@ const API=
 
 loadPayments();
 
+function statusBadgeClass(status){
+
+const s=(status||"").toLowerCase();
+
+if(s==="pending") return "badge-pending";
+
+if(s==="approved") return "badge-approved";
+
+if(s==="rejected") return "badge-rejected";
+
+if(s==="shipped") return "badge-shipped";
+
+if(s==="delivered") return "badge-delivered";
+
+return "badge-default";
+
+}
+
 async function loadPayments(){
 
 const res=await fetch(API);
@@ -108,7 +135,7 @@ table.innerHTML+=`
 
 <tr>
 
-<td>
+<td class="cell-id">
 
 ${order.order_id}
 
@@ -120,7 +147,7 @@ ${order.customer}
 
 </td>
 
-<td>
+<td class="cell-amount">
 
 ₹${order.amount}
 
@@ -128,25 +155,33 @@ ${order.customer}
 
 <td>
 
+<span class="badge ${statusBadgeClass(order.payment_status)}">
+
 ${order.payment_status}
+
+</span>
 
 </td>
 
 <td>
+
+<span class="badge ${statusBadgeClass(order.order_status)}">
 
 ${order.order_status}
 
+</span>
+
 </td>
 
-<td>
+<td class="cell-actions">
 
 <button
 
 onclick="approve('${order.order_id}')"
 
-class="btn btn-success">
+class="btn btn-success btn-term">
 
-Approve
+✓ Approve
 
 </button>
 
@@ -154,9 +189,9 @@ Approve
 
 onclick="reject('${order.order_id}')"
 
-class="btn btn-danger">
+class="btn btn-danger btn-term">
 
-Reject
+✕ Reject
 
 </button>
 
@@ -164,9 +199,9 @@ Reject
 
 onclick="ship('${order.order_id}')"
 
-class="btn">
+class="btn btn-term btn-term-neutral">
 
-Ship
+▶ Ship
 
 </button>
 
@@ -174,9 +209,9 @@ Ship
 
 onclick="deliver('${order.order_id}')"
 
-class="btn">
+class="btn btn-term btn-term-neutral">
 
-Deliver
+■ Deliver
 
 </button>
 
