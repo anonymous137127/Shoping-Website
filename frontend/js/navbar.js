@@ -32,7 +32,7 @@ function loadNavbar() {
 
 <a href="index.html" class="logo">
 
-🛒 <strong>Market</strong>
+🛒 <strong>NandiMart</strong>
 
 </a>
 
